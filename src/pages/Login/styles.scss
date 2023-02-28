@@ -1,17 +1,45 @@
 @import '../../styles/sass/colors';
 
-.container {
+.main__container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 50vh;
   padding: 0 3vw;
   .brand {
     text-align: center;
     color: map-get($colors, grey, light);
     h3 {
       font-weight: 500;
+    }
+  }
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    color: map-get($colors, grey, light);
+    margin-bottom: 2vh;
+    > p {
+      margin: 0 5vw;
+      font-size: 0.8rem;
+    }
+    .line {
+      width: 100%;
+      height: 1px;
+      background-color: map-get($colors, grey, light);
+    }
+  }
+  .forget__password {
+    margin-left: auto;
+    margin-top: 1vh;
+    color: map-get($colors, grey, light);
+  }
+  .create__account {
+    color: map-get($colors, grey, light);
+    a {
+      color: map-get($colors, colorized, primary);
+      font-weight: 600;
     }
   }
 }
