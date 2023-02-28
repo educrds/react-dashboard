@@ -1,0 +1,71 @@
+@import '../../styles/sass/colors';
+
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.auth__button {
+  width: 100%;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background: map-get($colors, colorized, primary);
+  border: none;
+  border-radius: 5px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+  background: map-get($colors, colorized, primary);
+  margin: 2vh;
+}
+
+.auth__button,
+.auth__button span {
+  transition: 200ms;
+}
+
+.auth__button .text {
+  transform: translateX(175px);
+  color: white;
+  font-weight: 400;
+  font-size: 1.1rem;
+}
+
+.auth__button .icon {
+  position: absolute;
+  border-left: 1px solid map-get($colors, colorized, secondary);
+  transform: translateX(350px);
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth__button svg {
+  font-size: 1.75rem;
+  fill: #eee;
+}
+
+.auth__button:hover {
+  background: map-get($colors, colorized, primary);
+}
+
+.auth__button:hover .text {
+  color: transparent;
+}
+
+.auth__button:hover .icon {
+  width: 400px;
+  border-left: none;
+  transform: translateX(0);
+}
+
+.auth__button:focus {
+  outline: none;
+}
