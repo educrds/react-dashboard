@@ -1,0 +1,80 @@
+@import '../../styles/sass/colors';
+
+.form__group {
+  position: relative;
+  padding: 15px 0 0;
+  margin: 5vh 0 0;
+  width: 100%;
+}
+
+.form__field {
+  font-family: inherit;
+  width: 100%;
+  border: 0;
+  border-bottom: 1.5px solid map-get($colors, grey, dark);
+  outline: 0;
+  font-size: 1.3rem;
+  color: map-get($colors, grey, dark);
+  padding: 7px 0;
+  background: transparent;
+  transition: border-color 0.2s;
+  font-weight: 400;
+
+  &::placeholder {
+    color: transparent;
+  }
+
+  &:placeholder-shown ~ .form__label {
+    font-size: 1.3rem;
+    cursor: text;
+    top: 20px;
+  }
+}
+
+.form__label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 1rem;
+  color: map-get($colors, grey, dark);
+}
+
+.form__show {
+  position: absolute;
+  top: 60%;
+  transform: translateY(-50%);
+  right: 0;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  svg {
+    display: flex;
+    align-items: center;
+    font-size: 1.35rem;
+  }
+}
+
+.form__field:focus {
+  ~ .form__label {
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.2s;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  padding-bottom: 6px;
+  font-weight: 500;
+  border-width: 2px;
+  border-image-slice: 1;
+}
+
+/* reset input */
+.form__field {
+  &:required,
+  &:invalid {
+    box-shadow: none;
+  }
+}
