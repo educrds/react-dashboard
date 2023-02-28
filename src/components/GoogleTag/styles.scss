@@ -1,0 +1,30 @@
+@import '../../styles/sass/colors';
+
+.google-tag {
+  background: map-get($colors, white, primary);
+  color: map-get($colors, grey, dark);
+  border-radius: .5rem;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 5vh 0 2vh;
+  font-weight: 500;
+  font-size: 1.1rem;
+  box-shadow: rgba(0, 0, 0, 0.10) 0px 4px 5px;
+  .google-icon {
+    margin-right: .5rem;
+
+    svg {
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+    }
+  }
+  .text {
+    display: flex;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+  }
+}
