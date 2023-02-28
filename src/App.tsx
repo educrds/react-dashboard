@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
-import reactLogo from './react.svg';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import React from 'react';
 import Login from './pages/Login';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import './styles/css/style.css';
 
 const App: React.FC = () => {
-  const [count, setCount] = useState<number>(0);
-
   return (
     <BrowserRouter>
       <Routes>
