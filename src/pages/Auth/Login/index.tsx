@@ -7,34 +7,62 @@ import '../styles.scss';
 import illustration from '../../../assets/imgs/money-rafiki.png';
 import Input from '../../../components/Inputs/Input';
 import { Link } from 'react-router-dom';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../services/firebaseConfig';
+import { signInWithEmailAndPassword, signInWithPopup, sendPasswordResetEmail } from 'firebase/auth';
+import { auth, provider } from '../../../services/firebaseConfig';
+import { MdOutlineMarkEmailRead } from 'react-icons/md';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [sendEmailPasswordReset, setSendEmailPasswordReset] = useState(false);
 
-  const HandleLoginClick = event => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then(userCredential => {
-        // Signed in
-        const user = userCredential.user;
-        console.log(user);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+  const HandleLoginClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      console.log(user);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleEmailChange = event => setEmail(event.target.value);
-  const handlePasswordChange = event => setPassword(event.target.value);
+  const handleEmailChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
+    setEmail(event.target.value);
+  const handlePasswordChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
+    setPassword(event.target.value);
+
+  const handleLoginWithGoogle = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+    }
+  };
+
+  const handlePasswordReset = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault();
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setSendEmailPasswordReset(true);
+      setTimeout(() => {
+        setSendEmailPasswordReset(false);
+      }, 2500);
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+    }
+  };
 
   return (
     <div className='flex__container'>
       <div className='main__container'>
         <Brand />
-        <GoogleTag text='Entrar com Google' />
+        <GoogleTag text='Entrar com Google' onClick={handleLoginWithGoogle} />
         <Line />
+        {sendEmailPasswordReset && <AlertMessage />}
         <Input
           type='email'
           placeholder='Email'
@@ -44,11 +72,20 @@ const Login = () => {
           value={email}
         />
         <PasswordInput onChange={handlePasswordChange} value={password} />
-        <ForgetPassword />
+        <ForgetPassword onClick={handlePasswordReset} />
         <AuthButton text='Entrar' onClick={HandleLoginClick} />
         <CreateAccount />
       </div>
       <Illustration />
+    </div>
+  );
+};
+
+const AlertMessage = () => {
+  return (
+    <div className='alert__message'>
+      <MdOutlineMarkEmailRead />
+      Email para redefinir senha enviado.
     </div>
   );
 };
@@ -63,9 +100,9 @@ const Line = () => {
   );
 };
 
-const ForgetPassword = () => {
+const ForgetPassword = ({ onClick }) => {
   return (
-    <div className='forget__password'>
+    <div className='forget__password' onClick={onClick}>
       <a href='' target='__blank'>
         <u>Esqueci minha senha</u>
       </a>

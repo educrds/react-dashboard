@@ -11,6 +11,23 @@
     padding: 5vh 5vw;
     height: 100%;
     flex: 1;
+    .alert__message {
+      width: 100%;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      margin: 3vh 0 0;
+      padding: 1vh 0;
+      border-radius: 0.5rem;
+      color: #2c6e49;
+      background-color: #c7f9cc;
+      svg {
+        font-size: 1.35rem;
+        margin-right: .5vw;
+      }
+    }
     .container {
       display: flex;
       justify-content: center;

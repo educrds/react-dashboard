@@ -4,10 +4,11 @@ import { FcGoogle } from 'react-icons/fc';
 
 type Props = {
   text: string;
+  onClick: (value: string) => void;
 };
 
-const GoogleTag = ({ text }: Props) => (
-  <button className='google-tag'>
+const GoogleTag = ({ text, onClick }: Props) => (
+  <button className='google-tag' onClick={onClick}>
     <div className='google-icon'>
       <FcGoogle />
     </div>
