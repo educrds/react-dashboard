@@ -2,13 +2,8 @@ import React, { useState } from 'react';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import '../styles.scss';
 
-const PasswordInput = () => {
-  const [password, setPassword] = useState('');
+const PasswordInput = ({ ...others }) => {
   const [showPassword, setShowPassword] = useState(false);
-
-  const handlePasswordChange = event => {
-    setPassword(event.target.value);
-  };
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -19,12 +14,11 @@ const PasswordInput = () => {
       <input
         type={showPassword ? 'text' : 'password'}
         className='form__field'
-        value={password}
-        onChange={handlePasswordChange}
         placeholder='Senha'
         name='Senha'
         id='Senha'
         required
+        {...others}
       />
       <label htmlFor='Senha' className='form__label'>
         Senha

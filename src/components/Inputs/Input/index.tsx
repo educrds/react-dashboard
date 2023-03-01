@@ -8,24 +8,17 @@ interface Props {
   label: string;
 }
 
-const Input = ({ type, placeholder, name, label }: Props) => {
-  const [value, setValue] = useState('');
-
-  const handleChange = event => {
-    setValue(event.target.value);
-  };
-
+const Input = ({ type, placeholder, name, label, ...others }: Props) => {
   return (
     <div className='form__group field'>
       <input
         type={type}
         className='form__field'
-        value={value}
-        onChange={handleChange}
         placeholder={placeholder}
         name={name}
         id={name}
         required
+        {...others}
       />
       <label htmlFor={name} className='form__label'>
         {label}

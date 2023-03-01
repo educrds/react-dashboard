@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AuthButton from '../../../components/AuthButton';
 import Brand from '../../../components/Brand';
 import GoogleTag from '../../../components/GoogleTag';
@@ -7,12 +7,28 @@ import '../styles.scss';
 import illustration from '../../../assets/imgs/money-rafiki.png';
 import Input from '../../../components/Inputs/Input';
 import { Link } from 'react-router-dom';
-
-const HandleRegisterClick = () => {
-  return;
-};
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../../services/firebaseConfig';
 
 const Register = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const HandleRegisterClick = event => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(userCredential => {
+        // Signed in
+        console.log(userCredential);
+        const user = userCredential.user;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  const handleEmailChange = event => setEmail(event.target.value);
+  const handlePasswordChange = event => setPassword(event.target.value);
+
   return (
     <div className='flex__container'>
       <div className='main__container'>
@@ -23,9 +39,15 @@ const Register = () => {
           <p>OU</p>
           <hr className='line' />
         </div>
-        <Input type='nome' placeholder='Nome' name='nome' label='Nome' />
-        <Input type='email' placeholder='Email' name='email' label='Email' />
-        <PasswordInput />
+        <Input
+          type='email'
+          placeholder='Email'
+          name='email'
+          label='Email'
+          onChange={handleEmailChange}
+          value={email}
+        />
+        <PasswordInput onChange={handlePasswordChange} value={password} />
         <AuthButton text='Cadastrar' onClick={HandleRegisterClick} />
         <div className='create__account'>
           <p>
