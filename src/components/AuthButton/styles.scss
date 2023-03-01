@@ -8,8 +8,8 @@
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: .5rem;
-  box-shadow: rgba(0, 0, 0, 0.10) 0px 4px 5px;
+  border-radius: 0.5rem;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 5px;
   background: map-get($colors, colorized, primary);
   margin: 3vh 0;
   &:hover {

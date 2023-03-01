@@ -1,13 +1,14 @@
 import React from 'react';
-import AuthButton from '../../components/AuthButton';
-import Brand from '../../components/Brand';
-import EmailInput from '../../components/Inputs/EmailInput';
-import GoogleTag from '../../components/GoogleTag';
-import PasswordInput from '../../components/Inputs/PasswordInput';
-import './styles.scss';
-import illustration from '../../assets/imgs/money-rafiki.png';
+import AuthButton from '../../../components/AuthButton';
+import Brand from '../../../components/Brand';
+import GoogleTag from '../../../components/GoogleTag';
+import PasswordInput from '../../../components/Inputs/PasswordInput';
+import '../styles.scss';
+import illustration from '../../../assets/imgs/money-rafiki.png';
+import Input from '../../../components/Inputs/Input';
+import { Link } from 'react-router-dom';
 
-const AuthForm = () => {
+const Login = () => {
   return (
     <div className='flex__container'>
       <div className='main__container'>
@@ -20,7 +21,7 @@ const AuthForm = () => {
           <p>OU</p>
           <hr className='line' />
         </div>
-        <EmailInput />
+        <Input type='email' placeholder='Email' name='email' label='Email' />
         <PasswordInput />
         <div className='forget__password'>
           <a href='' target='__blank'>
@@ -30,7 +31,7 @@ const AuthForm = () => {
         <AuthButton text='Entrar' onClick={() => {}} />
         <div className='create__account'>
           <p>
-            Não tem uma conta? <a href=''>Criar agora</a>
+            Não tem uma conta? <Link to={'/register'}>Criar agora</Link>
           </p>
         </div>
       </div>
@@ -44,4 +45,4 @@ const AuthForm = () => {
   );
 };
 
-export default AuthForm;
+export default Login;

@@ -24,7 +24,7 @@
       align-items: center;
       width: 100%;
       color: map-get($colors, grey, light);
-      margin: 1vh 0;
+      margin: 0 0;
       > p {
         margin: 0 1.35vw;
         font-size: 0.85rem;
@@ -62,7 +62,7 @@
       position: absolute;
       top: 25px;
       color: map-get($colors, grey, light);
-      font-weight: 600;
+      font-weight: 500;
     }
     img {
       width: 90%;
