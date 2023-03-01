@@ -16,6 +16,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [sendEmailPasswordReset, setSendEmailPasswordReset] = useState(false);
 
+  // Responsável por logar uma conta de usuário com email e senha através da função signInWithEmailAndPassword do Firebase.
   const HandleLoginClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -25,11 +26,16 @@ const Login = () => {
       console.log(error);
     }
   };
-
+  // Responsável por atualizar o estado da variável email conforme o usuário digita seu endereço de email.
   const handleEmailChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
     setEmail(event.target.value);
+
+  // Responsável por atualizar o estado da variável password conforme o usuário digita sua senha
+
   const handlePasswordChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
     setPassword(event.target.value);
+
+  // Responsável por autenticar o usuário através da conta do Google usando a função signInWithPopup do Firebase.
 
   const handleLoginWithGoogle = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();

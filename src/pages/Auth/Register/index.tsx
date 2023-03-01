@@ -14,6 +14,7 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // Responsável por criar uma nova conta de usuário com email e senha através da função createUserWithEmailAndPassword do Firebase.
   const HandleRegisterClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -24,12 +25,15 @@ const Register = () => {
     }
   };
 
+  // Responsável por atualizar o estado da variável email conforme o usuário digita seu endereço de email.
   const handleEmailChange = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
     setEmail(event.target.value);
 
+  // Responsável por atualizar o estado da variável password conforme o usuário digita sua senha
   const handlePasswordChange = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
     setPassword(event.target.value);
 
+  // Responsável por autenticar o usuário através da conta do Google usando a função signInWithPopup do Firebase.
   const handleRegisterWithGoogle = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
