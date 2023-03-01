@@ -8,13 +8,15 @@ import illustration from '../../../assets/imgs/money-rafiki.png';
 import Input from '../../../components/Inputs/Input';
 import { Link } from 'react-router-dom';
 
+const HandleRegisterClick = () => {
+  return;
+};
+
 const Register = () => {
   return (
     <div className='flex__container'>
       <div className='main__container'>
-        <div className='brand'>
-          <Brand />
-        </div>
+        <Brand />
         <GoogleTag text='Cadastre-se com Google' />
         <div className='container'>
           <hr className='line' />
@@ -24,7 +26,7 @@ const Register = () => {
         <Input type='nome' placeholder='Nome' name='nome' label='Nome' />
         <Input type='email' placeholder='Email' name='email' label='Email' />
         <PasswordInput />
-        <AuthButton text='Cadastrar' onClick={() => {}} />
+        <AuthButton text='Cadastrar' onClick={HandleRegisterClick} />
         <div className='create__account'>
           <p>
             Já tem uma conta? <Link to={'/'}> Entrar</Link>
