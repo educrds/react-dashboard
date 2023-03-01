@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
-import './styles.scss';
+import '../styles.scss';
 
 const PasswordInput = () => {
   const [email, setEmail] = useState('');

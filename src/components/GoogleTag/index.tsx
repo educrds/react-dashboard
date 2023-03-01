@@ -7,12 +7,12 @@ type Props = {
 };
 
 const GoogleTag = ({ text }: Props) => (
-  <div className='google-tag'>
+  <button className='google-tag'>
     <div className='google-icon'>
       <FcGoogle />
     </div>
     <div className='text'>{text}</div>
-  </div>
+  </button>
 );
 
 export default GoogleTag;

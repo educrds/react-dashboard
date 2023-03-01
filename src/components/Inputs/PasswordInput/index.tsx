@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
-import './styles.scss';
+import '../styles.scss';
 
 const PasswordInput = () => {
   const [password, setPassword] = useState('');
@@ -32,27 +32,6 @@ const PasswordInput = () => {
       <button type='button' className='form__show' onClick={handleTogglePasswordVisibility}>
         {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
       </button>
-    </div>
-  );
-
-  return (
-    <div className='input__container'>
-      <label className='input__label' htmlFor='password'>
-        Password
-      </label>
-      <div>
-        <input
-          type={showPassword ? 'text' : 'password'}
-          id='password'
-          name='password'
-          value={password}
-          placeholder='Insira sua senha'
-          onChange={handlePasswordChange}
-        />
-        <button type='button' onClick={handleTogglePasswordVisibility}>
-          {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
-        </button>
-      </div>
     </div>
   );
 };

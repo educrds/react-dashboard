@@ -3,8 +3,10 @@
 .google-tag {
   background: map-get($colors, white, primary);
   color: map-get($colors, grey, dark);
+  border: none;
+  cursor: pointer;
   border-radius: .5rem;
-  height: 45px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,5 +28,10 @@
     display: flex;
     align-items: center; /* Centraliza verticalmente */
     justify-content: center; /* Centraliza horizontalmente */
+  }
+  &:hover {
+    transform: translateY(-5px);
+    transition: transform 500ms;
+    transition-delay: 100ms;
   }
 }
