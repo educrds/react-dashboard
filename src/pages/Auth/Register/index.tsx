@@ -7,8 +7,8 @@ import '../styles.scss';
 import illustration from '../../../assets/imgs/money-rafiki.png';
 import Input from '../../../components/Inputs/Input';
 import { Link } from 'react-router-dom';
-import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
-import { auth, provider } from '../../../services/firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../../services/firebaseConfig';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -33,25 +33,11 @@ const Register = () => {
   const handlePasswordChange = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
     setPassword(event.target.value);
 
-  // Responsável por autenticar o usuário através da conta do Google usando a função signInWithPopup do Firebase.
-  const handleRegisterWithGoogle = async (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    event.preventDefault();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-    } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-    }
-  };
-
   return (
     <div className='flex__container'>
       <div className='main__container'>
         <Brand />
-        <GoogleTag text='Cadastre-se com Google' onClick={handleRegisterWithGoogle} />
+        <GoogleTag text='Cadastre-se com Google' />
         <div className='container'>
           <hr className='line' />
           <p>OU</p>

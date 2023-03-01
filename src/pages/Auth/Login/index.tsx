@@ -7,8 +7,8 @@ import '../styles.scss';
 import illustration from '../../../assets/imgs/money-rafiki.png';
 import Input from '../../../components/Inputs/Input';
 import { Link } from 'react-router-dom';
-import { signInWithEmailAndPassword, signInWithPopup, sendPasswordResetEmail } from 'firebase/auth';
-import { auth, provider } from '../../../services/firebaseConfig';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../../../services/firebaseConfig';
 import { MdOutlineMarkEmailRead } from 'react-icons/md';
 
 const Login = () => {
@@ -31,23 +31,10 @@ const Login = () => {
     setEmail(event.target.value);
 
   // Responsável por atualizar o estado da variável password conforme o usuário digita sua senha
-
   const handlePasswordChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
     setPassword(event.target.value);
 
-  // Responsável por autenticar o usuário através da conta do Google usando a função signInWithPopup do Firebase.
-
-  const handleLoginWithGoogle = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    event.preventDefault();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-    } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-    }
-  };
-
+  // Responsável pelo envio de email para reset de senha
   const handlePasswordReset = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     try {
@@ -66,7 +53,7 @@ const Login = () => {
     <div className='flex__container'>
       <div className='main__container'>
         <Brand />
-        <GoogleTag text='Entrar com Google' onClick={handleLoginWithGoogle} />
+        <GoogleTag text='Entrar com Google' />
         <Line />
         {sendEmailPasswordReset && <AlertMessage />}
         <Input
