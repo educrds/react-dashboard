@@ -13,8 +13,8 @@
   border: 0;
   border-bottom: 1.5px solid map-get($colors, grey, dark);
   outline: 0;
-  // font-size: 1.2rem;
   color: map-get($colors, grey, dark);
+  font-size: 1.1rem;
   padding: 0.5rem 0.5vw;
   margin: 1.35vh 0 0;
   background: transparent;
@@ -26,7 +26,6 @@
   }
 
   &:placeholder-shown ~ .form__label {
-    font-size: 1.2rem;
     cursor: text;
     top: 20px;
   }
@@ -52,7 +51,7 @@
   svg {
     display: flex;
     align-items: center;
-    font-size: 1.35rem;
+    font-size: 1.3rem;
     color: map-get($colors, grey, light);
   }
 }
@@ -63,7 +62,6 @@
     top: 0;
     display: block;
     transition: 0.2s;
-    font-size: 1rem;
     font-weight: 500;
   }
   padding-bottom: 6px;
