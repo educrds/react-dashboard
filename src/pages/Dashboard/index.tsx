@@ -2,11 +2,7 @@ import React from 'react';
 import Navbar from '../../components/Navbar';
 
 const Dashboard = () => {
-  return (
-    <>
-      <Navbar />
-    </>
-  );
+  return <div>Dashboard</div>;
 };
 
 export default Dashboard;

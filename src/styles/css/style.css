@@ -22,4 +22,8 @@ body {
   background: #F2F5FC;
 }
 
+#root {
+  display: flex;
+}
+
 /*# sourceMappingURL=style.css.map */
