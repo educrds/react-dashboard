@@ -1,2 +1,14 @@
-@import '../../styles/sass/colors';
-
+.dashboard__container {
+  padding: 5vh 2vw 0 1.5vw;
+  color: #bfbfbf;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  .dashboard__bar {
+    display: flex;
+    img {
+      width: 5%;
+      margin-left: auto;
+    }
+  }
+}
