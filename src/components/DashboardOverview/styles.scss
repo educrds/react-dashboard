@@ -1,0 +1,42 @@
+@import '../../styles/sass/colors';
+
+.dashboard__item__square {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  &:nth-child(2) {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  .item__square__title {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    span {
+      opacity: 0.75;
+      font-size: 1.1rem;
+    }
+  }
+  .item__square__circle {
+    width: 15px;
+    height: 15px;
+    border-radius: 30%;
+    &.circle__green {
+      background-color: #22c58b;
+    }
+    &.circle__red {
+      background-color: #eb3d3d;
+    }
+    &.circle__blue {
+      background-color: map-get($colors, colorized, primary);
+    }
+  }
+  .item__square__value {
+    font-size: 2rem;
+    font-weight: 500;
+    color: map-get($colors, grey, dark);
+  }
+}
