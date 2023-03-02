@@ -2,7 +2,7 @@ import React from 'react';
 import './styles.scss';
 
 interface Props {
-  onClick: () => void;
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   text: string;
 }
 

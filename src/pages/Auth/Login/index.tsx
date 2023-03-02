@@ -27,15 +27,15 @@ const Login = () => {
     }
   };
   // Responsável por atualizar o estado da variável email conforme o usuário digita seu endereço de email.
-  const handleEmailChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
+  const handleEmailChange = (event: React.MouseEvent<HTMLButtonElement>) =>
     setEmail(event.target.value);
 
   // Responsável por atualizar o estado da variável password conforme o usuário digita sua senha
-  const handlePasswordChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLButtonElement>) =>
     setPassword(event.target.value);
 
   // Responsável pelo envio de email para reset de senha
-  const handlePasswordReset = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handlePasswordReset = async (event: React.ChangeEvent<HTMLButtonElement>) => {
     event.preventDefault();
     try {
       await sendPasswordResetEmail(auth, email);
@@ -44,8 +44,7 @@ const Login = () => {
         setSendEmailPasswordReset(false);
       }, 2500);
     } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
+      console.log(error.code, error.message);
     }
   };
 
@@ -123,4 +122,5 @@ const Illustration = () => {
     </div>
   );
 };
+
 export default Login;
