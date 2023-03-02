@@ -1,0 +1,8 @@
+@import '../../styles/sass/colors';
+
+.dashboard__item {
+  border-radius: 0.5rem;
+  background-color: map-get($colors, white, primary);
+  display: flex;
+  padding: 3vh 2vw;
+}
