@@ -1,12 +1,14 @@
 import React from 'react';
 import './styles.scss';
 import DashboardOverview from '../../components/DashboardOverview';
+import DashboardBarChart from '../../components/DashboardChartBar';
 
 const Dashboard = () => {
   return (
     <div className='dashboard__container'>
       <MenuBar />
       <DashboardOverview />
+      <DashboardBarChart />
     </div>
   );
 };

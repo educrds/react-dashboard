@@ -5,4 +5,7 @@
   background-color: map-get($colors, white, primary);
   display: flex;
   padding: 3vh 2vw;
+  h3 {
+    font-weight: 500;
+  }
 }
