@@ -3,6 +3,9 @@
 nav {
   width: 20%;
   height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
   background: map-get($colors, white, primary);
   .nav__container {
     padding: 5vh 1vw 2vh;

@@ -2,6 +2,8 @@ import React from 'react';
 import './styles.scss';
 import DashboardOverview from '../../components/DashboardOverview';
 import DashboardBarChart from '../../components/DashboardChartBar';
+import DashboardDoughnutChart from '../../components/DashboardDoughnutChart';
+import DashboardTransactions from '../../components/DashboardTransactions';
 
 const Dashboard = () => {
   return (
@@ -9,6 +11,11 @@ const Dashboard = () => {
       <MenuBar />
       <DashboardOverview />
       <DashboardBarChart />
+      <div className='doughnut__charts'>
+        <DashboardDoughnutChart />
+        <DashboardDoughnutChart />
+      </div>
+      <DashboardTransactions />
     </div>
   );
 };

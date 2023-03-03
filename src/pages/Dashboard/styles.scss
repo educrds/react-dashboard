@@ -1,14 +1,30 @@
+@import '../../styles/sass/colors';
+
 .dashboard__container {
   padding: 5vh 2vw 0 1.5vw;
   color: #bfbfbf;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+  margin-left: 20%;
   gap: 1.35rem;
+
+  h3 {
+    color: #666666;
+    font-weight: 500;
+  }
   .dashboard__bar {
     display: flex;
     img {
       width: 5%;
       margin-left: auto;
+    }
+  }
+  .doughnut__charts {
+    display: flex;
+    gap: 1.35rem;
+    .dashboard__item {
+      flex: 1;
     }
   }
 }
