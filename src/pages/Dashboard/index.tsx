@@ -3,20 +3,23 @@ import './styles.scss';
 import DashboardOverview from '../../components/DashboardOverview';
 import DashboardBarChart from '../../components/DashboardChartBar';
 import DashboardDoughnutChart from '../../components/DashboardDoughnutChart';
-import DashboardTransactions from '../../components/DashboardTransactions';
+import AllTransactions from '../../components/AllTransactions';
+import Wrapper from '../../components/Wrapper';
 
 const Dashboard = () => {
   return (
-    <div className='dashboard__container'>
-      <MenuBar />
-      <DashboardOverview />
-      <DashboardBarChart />
-      <div className='doughnut__charts'>
-        <DashboardDoughnutChart />
-        <DashboardDoughnutChart />
-      </div>
-      <DashboardTransactions />
-    </div>
+    <>
+      <Wrapper>
+        <MenuBar />
+        <DashboardOverview />
+        <DashboardBarChart />
+        <div className='doughnut__charts'>
+          <DashboardDoughnutChart />
+          <DashboardDoughnutChart />
+        </div>
+        <AllTransactions />
+      </Wrapper>
+    </>
   );
 };
 
