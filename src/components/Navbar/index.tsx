@@ -2,21 +2,18 @@ import React, { useState } from 'react';
 import Brand from '../Brand';
 import './styles.scss';
 import {
-  MdOutlineGridView,
-  MdOutlineReceiptLong,
-  MdOutlineNorthEast,
-  MdOutlineSouthWest,
-  MdOutlineLogout,
-} from 'react-icons/md';
-import { BiPlus } from 'react-icons/bi';
+  TrendingUpOutlined,
+  TrendingDownOutlined,
+  GridViewOutlined,
+  ReceiptLongOutlined,
+  ExitToAppOutlined,
+  AddOutlined,
+} from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 
 const Navbar = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const handleClick = index => {
-    setActiveIndex(index);
-  };
+  const [activeIndex, setActiveIndex] = useState(null);
+  const handleClick = index => setActiveIndex(index);
 
   return (
     <nav>
@@ -25,28 +22,28 @@ const Navbar = () => {
         <div className='nav__menu'>
           <AddButton onClick={() => {}} />
           <NavButton
-            icon={<MdOutlineGridView />}
+            icon={<GridViewOutlined />}
             text='Dashboard'
             onClick={() => handleClick(0)}
             isActive={activeIndex === 0}
             to='/dashboard'
           />
           <NavButton
-            icon={<MdOutlineNorthEast />}
+            icon={<TrendingUpOutlined />}
             text='Receitas'
             onClick={() => handleClick(1)}
             isActive={activeIndex === 1}
             to='/receitas'
           />
           <NavButton
-            icon={<MdOutlineSouthWest />}
+            icon={<TrendingDownOutlined />}
             text='Despesas'
             onClick={() => handleClick(2)}
             isActive={activeIndex === 2}
             to='/despesas'
           />
           <NavButton
-            icon={<MdOutlineReceiptLong />}
+            icon={<ReceiptLongOutlined />}
             text='Transações'
             onClick={() => handleClick(3)}
             isActive={activeIndex === 3}
@@ -86,7 +83,7 @@ const AddButton = ({ onClick }: AddButtonProps) => {
   return (
     <div className='nav__button__container add__button' onClick={onClick}>
       <div>
-        <BiPlus />
+        <AddOutlined />
         <span>Novo</span>
       </div>
     </div>
@@ -100,7 +97,7 @@ interface LogoutButtonProps {
 const LogoutButton = ({ onClick }: LogoutButtonProps) => {
   return (
     <div className='logout__button' onClick={onClick}>
-      <MdOutlineLogout />
+      <ExitToAppOutlined />
       Sair
     </div>
   );
