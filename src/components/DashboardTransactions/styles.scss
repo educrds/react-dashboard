@@ -1,4 +1,15 @@
+@import '../../styles/sass/colors';
+
 .MuiDataGrid-root {
   // background-color: #fff;
-  border-radius: .5rem !important;
+  border-radius: 0.5rem !important;
+}
+
+.table__header__color {
+  background-color: map-get($colors, colorized, primary);
+  color: map-get($colors, white, secondary);
+  font-family: 'Poppins';
+  button {
+    color: map-get($colors, white, secondary);
+  }
 }
