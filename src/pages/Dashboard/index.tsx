@@ -26,18 +26,16 @@ const Dashboard = () => {
   const { collapsed } = useContext(NavbarContext);
 
   return (
-    <>
-      <div className={`wrapper ${collapsed && 'collapsed'}`}>
-        <MenuBar />
-        <DashboardOverview />
-        <BarChart title='Receitas | Despesas' datasets={data} />
-        <div className='doughnut__charts'>
-          <ExpenseDoughnutChart />
-          <RevenueDoughnutChart />
-        </div>
-        <AllTransactions />
+    <div className={`wrapper ${collapsed && 'collapsed'}`}>
+      <MenuBar />
+      <DashboardOverview />
+      <BarChart title='Receitas | Despesas' datasets={data} />
+      <div className='doughnut__charts'>
+        <ExpenseDoughnutChart />
+        <RevenueDoughnutChart />
       </div>
-    </>
+      <AllTransactions />
+    </div>
   );
 };
 

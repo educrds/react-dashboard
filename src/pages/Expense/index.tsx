@@ -1,9 +1,32 @@
-import React from 'react'
+import React, { useContext } from 'react';
+import AllTransactions from '../../components/AllTransactions';
+import { NavbarContext } from '../../contexts/NavbarContext';
+import BarChart from '../../components/ChartBar';
+import ExpenseDoughnutChart from '../../components/DoughnutChart/Expenses';
+import './styles.scss';
 
-const Expense = () => {
+const Expenses = () => {
+  const { collapsed } = useContext(NavbarContext);
+
   return (
-    <div>Expense</div>
-  )
-}
+    <div className={`wrapper ${collapsed && 'collapsed'}`}>
+      <h2>Despesas</h2>
+      <div className='revenue__charts'>
+        <ExpenseDoughnutChart />
+        <BarChart
+          title='Despesas'
+          datasets={[
+            {
+              label: 'Despesas',
+              data: [1000, 1500, 2000, 2500, 1800, 3000, 2500, 3000, 1000],
+              backgroundColor: '#ff8c8c'
+            },
+          ]}
+        />
+      </div>
+      <AllTransactions />
+    </div>
+  );
+};
 
-export default Expense
+export default Expenses;
