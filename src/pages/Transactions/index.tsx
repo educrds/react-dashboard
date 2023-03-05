@@ -3,7 +3,6 @@ import { ptBR } from '@mui/x-data-grid';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AllTransactions from '../../components/AllTransactions';
 import { NavbarContext } from '../../contexts/NavbarContext';
-import './styles.scss';
 
 const theme = createTheme(ptBR);
 

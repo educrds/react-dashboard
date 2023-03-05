@@ -5,7 +5,22 @@ import AllTransactions from '../../components/AllTransactions';
 import { NavbarContext } from '../../contexts/NavbarContext';
 import './styles.scss';
 import ExpenseDoughnutChart from '../../components/DoughnutChart/Expenses';
-import ReceivesDoughnutChart from '../../components/DoughnutChart/Receives';
+import RevenueDoughnutChart from '../../components/DoughnutChart/Revenue';
+
+const data = [
+  {
+    label: 'Receitas',
+    data: [2000, 3000, 2500, 4500, 3500, 4000, 1000, 1500, 2000, 2500, 1800, 3000],
+    backgroundColor: '#bcffc6',
+    borderRadius: 5,
+  },
+  {
+    label: 'Despesas',
+    data: [1000, 1500, 2000, 2500, 1800, 3000, 1000, 1750, 1000, 1500, 2800, 3000],
+    backgroundColor: '#ff8c8c',
+    borderRadius: 5,
+  },
+];
 
 const Dashboard = () => {
   const { collapsed } = useContext(NavbarContext);
@@ -15,10 +30,10 @@ const Dashboard = () => {
       <div className={`wrapper ${collapsed && 'collapsed'}`}>
         <MenuBar />
         <DashboardOverview />
-        <BarChart />
+        <BarChart title='Receitas | Despesas' datasets={data} />
         <div className='doughnut__charts'>
           <ExpenseDoughnutChart />
-          <ReceivesDoughnutChart />
+          <RevenueDoughnutChart />
         </div>
         <AllTransactions />
       </div>
