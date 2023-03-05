@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams, ptBR } from '@mui/x-data-grid';
-import { Check, Clear, CreditCard, PaidOutlined } from '@mui/icons-material';
+import { CloseOutlined, CreditCard, PaidOutlined, CheckOutlined } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Tab, Tabs, Box, Chip } from '@mui/material';
 import './styles.scss';
@@ -50,16 +50,16 @@ const columns: GridColDef[] = [
   {
     field: 'situation',
     headerName: 'Situação',
-    flex: 0.7,
+    flex: 1,
     headerClassName: 'table__header__color',
 
     sortable: false,
     renderCell: (params: GridValueGetterParams) => {
       const situation = params.row.situation;
       if (situation === 'paga') {
-        return <Check color='primary' />;
+        return <Chip icon={<CheckOutlined fontSize='small' />} label='Paga' color='primary' />;
       }
-      return <Clear color='error' />;
+      return <Chip icon={<CloseOutlined fontSize='small' />} label='Não paga' color='error' />;
     },
   },
   {
@@ -182,7 +182,8 @@ const AllTransactions = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [tableData, setTableData] = useState(rows);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => setSelectedTab(newValue);
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) =>
+    setSelectedTab(newValue);
 
   useEffect(() => {
     if (selectedTab === 0) {
