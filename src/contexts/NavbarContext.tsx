@@ -1,5 +1,4 @@
 import { createContext } from 'react';
-
 interface INavbarContext {
   collapsed: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -7,7 +6,5 @@ interface INavbarContext {
 
 export const NavbarContext = createContext<INavbarContext>({
   collapsed: false,
-  setCollapsed: collapsed => {
-    !collapsed;
-  },
+  setCollapsed: collapsed => {},
 });

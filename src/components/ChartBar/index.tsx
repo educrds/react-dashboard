@@ -4,7 +4,7 @@ import { options, data } from '../../charts/barChartConfig';
 import DashboardItem from '../DashboardItem';
 import './styles.scss';
 
-const DashboardBarChart = () => {
+const BarChart = () => {
   return (
     <DashboardItem>
       <div style={{ width: '100%' }}>
@@ -14,4 +14,4 @@ const DashboardBarChart = () => {
   );
 };
 
-export default DashboardBarChart;
+export default BarChart;
