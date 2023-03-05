@@ -10,7 +10,6 @@ type BarChartProps = {
     label: string;
     data: number[];
     backgroundColor: string;
-    borderRadius: number;
   }[];
 };
 

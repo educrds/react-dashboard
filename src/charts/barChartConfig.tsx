@@ -31,9 +31,12 @@ const options = {
     },
     title: {
       display: true,
+      align: 'start',
+      color: '#bfbfbf',
       font: {
-        size: 16,
+        size: 18,
         family: 'Poppins',
+        weight: '500',
       },
       padding: {
         top: 20,
