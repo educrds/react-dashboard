@@ -1,7 +1,7 @@
 import React from 'react';
 import DoughnutChart from '..';
 
-const ReceivesDoughnutChart = () => {
+const RevenueDoughnutChart = () => {
   const title = 'Receitas por categoria';
   const labels = ['Mensalidades', 'Freelancer'];
   const data = [3000, 2000];
@@ -10,4 +10,4 @@ const ReceivesDoughnutChart = () => {
   return <DoughnutChart title={title} labels={labels} data={data} colors={colors} />;
 };
 
-export default ReceivesDoughnutChart;
+export default RevenueDoughnutChart;
