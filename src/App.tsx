@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes, Outlet } from 'react-router-dom';
 import './styles/css/style.css';
 import Dashboard from './pages/Dashboard';
 import Revenue from './pages/Revenue';
-import Expense from './pages/Expense';
+import Expenses from './pages/Expense';
 import Transactions from './pages/Transactions';
 import Navbar from './components/Navbar';
 import Login from './pages/Auth/Login';
@@ -31,7 +31,7 @@ const App: React.FC = () => {
             >
               <Route path='/dashboard' element={<Dashboard />} />
               <Route path='/receitas' element={<Revenue />} />
-              <Route path='/despesas' element={<Expense />} />
+              <Route path='/despesas' element={<Expenses />} />
               <Route path='/transacoes' element={<Transactions />} />
             </Route>
           </Route>

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import Brand from '../Brand';
 import './styles.scss';
 import {
@@ -13,25 +13,30 @@ import {
 } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { NavbarContext } from '../../contexts/NavbarContext';
+import IconMenu from '../AddMenu';
 
-const Navbar = ({ toggleClick, isCollapsed }) => {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+interface NavbarProps {
+  toggleClick: () => void;
+  isCollapsed: boolean;
+}
+
+const Navbar = ({ toggleClick, isCollapsed }: NavbarProps) => {
+  const [activeIndex, setActiveIndex] = useState(null);
   const { collapsed } = useContext(NavbarContext);
+  const [addMenuOpen, setAddMenuOpen] = useState(false);
 
-  const handleClick = (index: number): void => setActiveIndex(index);
-  const renderText = (text: string): JSX.Element | null => {
-    return !collapsed ? <span>{text}</span> : null;
-  };
-
+  const handleClick = (index: number | null): void => setActiveIndex(index);
+  const renderText = (text: string): JSX.Element | null => !collapsed ? <span>{text}</span> : null;
+  const addHandleClick = () => setAddMenuOpen(!addMenuOpen);
+  
   return (
     <nav className={`${isCollapsed && 'collapsed'}`}>
       <div className={'nav__wrapper'}>
         <Brand />
-        <div className='nav__toggle' onClick={toggleClick}>
-          {isCollapsed ? <KeyboardDoubleArrowRightOutlined /> : <KeyboardDoubleArrowLeftOutlined />}
-        </div>
+        <ToggleButton onClick={toggleClick} collapsed={isCollapsed} />
         <div className='nav__menu'>
-          <AddButton onClick={() => {}} text={renderText('Novo')} collapsed={isCollapsed} />
+          <AddButton onClick={addHandleClick} text={renderText('Novo')} collapsed={isCollapsed} />
+          {addMenuOpen && <IconMenu />}
           <NavButton
             icon={<GridViewOutlined />}
             text={renderText('Dashboard')}
@@ -82,16 +87,25 @@ interface NavButtonProps {
 
 const NavButton = ({ icon, text, onClick, isActive, to, collapsed }: NavButtonProps) => {
   return (
-    <NavLink
-      className={`nav__button__container ${isActive && 'active'}`}
-      to={to}
-      onClick={onClick}
-    >
+    <NavLink className={`nav__button__container ${isActive && 'active'}`} to={to} onClick={onClick}>
       <div>
         {icon}
         {!collapsed ? <span>{text}</span> : null}
       </div>
     </NavLink>
+  );
+};
+
+interface ToggleButtonProps {
+  onClick: () => void;
+  collapsed: boolean;
+}
+
+const ToggleButton = ({ onClick, collapsed }: ToggleButtonProps) => {
+  return (
+    <div className='nav__toggle' onClick={onClick}>
+      {collapsed ? <KeyboardDoubleArrowRightOutlined /> : <KeyboardDoubleArrowLeftOutlined />}
+    </div>
   );
 };
 
@@ -103,10 +117,7 @@ interface AddButtonProps {
 
 const AddButton = ({ onClick, text, collapsed }: AddButtonProps) => {
   return (
-    <div
-      className={`nav__button__container add__button`}
-      onClick={onClick}
-    >
+    <div className={`nav__button__container add__button`} onClick={onClick}>
       <div>
         <AddOutlined />
         {!collapsed ? <span>{text}</span> : null}

@@ -63,6 +63,7 @@ nav {
       flex-direction: column;
       gap: 3vh;
       margin-top: -120px;
+      position: relative;
       .nav__button__container {
         transition: width 0.5s ease-in-out;
         position: relative;
