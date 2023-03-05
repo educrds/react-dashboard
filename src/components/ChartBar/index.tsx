@@ -1,15 +1,33 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
-import { options, data } from '../../charts/barChartConfig';
 import DashboardItem from '../DashboardItem';
+import { options, labels } from '../../charts/barChartConfig';
 import './styles.scss';
 
-const BarChart = () => {
+type BarChartProps = {
+  title: string;
+  datasets: {
+    label: string;
+    data: number[];
+    backgroundColor: string;
+    borderRadius: number;
+  }[];
+};
+
+const BarChart = ({ title, datasets }: BarChartProps) => {
+  const data = {
+    labels,
+    datasets,
+  };
+
+  const chartOptions = {
+    ...options,
+    plugins: { ...options.plugins, title: { ...options.plugins.title, text: title } },
+  };
+
   return (
     <DashboardItem>
-      <div style={{ width: '100%' }}>
-        <Bar options={options} data={data} />
-      </div>
+      <Bar options={chartOptions} data={data} />
     </DashboardItem>
   );
 };

@@ -26,18 +26,24 @@ const options = {
         padding: 15,
       },
     },
-    title: {
-      display: true,
-      align: 'start',
-      text: 'Receitas | Despesas',
-      font: {
-        size: 18,
-        family: 'Poppins',
-        weight: '500',
-      },
-    },
     tooltip: {
       usePointStyle: true,
+    },
+    title: {
+      display: true,
+      font: {
+        size: 16,
+        family: 'Poppins',
+      },
+      padding: {
+        top: 20,
+      },
+    },
+  },
+  elements: {
+    bar: {
+      borderRadius: 5,
+      backgroundColor: '#215DBE',
     },
   },
   scales: {
@@ -69,22 +75,4 @@ const options = {
 
 const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Receitas',
-      data: [2000, 3000, 2500, 4500, 3500, 4000, 1000, 1500, 2000, 2500, 1800, 3000],
-      backgroundColor: '#bcffc6',
-      borderRadius: 5,
-    },
-    {
-      label: 'Despesas',
-      data: [1000, 1500, 2000, 2500, 1800, 3000, 1000, 1750, 1000, 1500, 2800, 3000],
-      backgroundColor: '#ff8c8c',
-      borderRadius: 5,
-    },
-  ],
-};
-
-export { options, data };
+export { options, labels };
