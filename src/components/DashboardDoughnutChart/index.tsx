@@ -10,7 +10,6 @@ const data = {
   labels: ['Serviços', 'Aluguel', 'Casa', 'Lazer', 'Internet', 'Mercado'],
   datasets: [
     {
-      // label: labels,
       data: [300, 2000, 500, 500, 89, 750],
       backgroundColor: ['#6B9DFE', '#FFBC6E', '#5D3882', '#B494FF', '#FE797A', '#FF7EA5'],
       hoverOffset: 4,

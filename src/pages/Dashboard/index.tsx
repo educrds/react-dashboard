@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
-import './styles.scss';
 import DashboardOverview from '../../components/DashboardOverview';
 import DashboardBarChart from '../../components/DashboardChartBar';
 import DashboardDoughnutChart from '../../components/DashboardDoughnutChart';
 import AllTransactions from '../../components/AllTransactions';
 import { NavbarContext } from '../../contexts/NavbarContext';
+import './styles.scss';
 
 const Dashboard = () => {
   const { collapsed } = useContext(NavbarContext);
