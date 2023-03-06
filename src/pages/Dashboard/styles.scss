@@ -1,9 +1,3 @@
-@import '../../styles/sass/colors';
-
-h2 {
-  color: #666666;
-  font-weight: 500;
-}
 .dashboard__bar {
   display: flex;
   align-items: center;
@@ -13,11 +7,11 @@ h2 {
     margin-left: auto;
   }
 }
-.doughnut__charts {
+.doughnut__charts__container {
   display: flex;
   gap: 1.35rem;
   width: 100%;
-  .dashboard__item {
+  > div {
     min-width: 0;
     flex: 1;
   }
