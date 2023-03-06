@@ -1,10 +1,5 @@
 @import '../../styles/sass/colors';
 
-.MuiDataGrid-root {
-  // background-color: #fff;
-  border-radius: 0.5rem !important;
-}
-
 .table__header__color {
   background-color: map-get($colors, colorized, primary);
   color: map-get($colors, white, secondary);
@@ -14,6 +9,6 @@
   }
 }
 
-.change__transaction__type{
+.change__transaction__type {
   display: flex;
 }

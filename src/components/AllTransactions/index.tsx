@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams, ptBR } from '@mui/x-data-grid';
-import { CloseOutlined, CreditCard, PaidOutlined, CheckOutlined } from '@mui/icons-material';
+import { CreditCard, PaidOutlined } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Tab, Tabs, Box, Chip } from '@mui/material';
+import { categoryColors } from '../../charts/doughnutChartConfig';
+import PaymentChip from '../PaymentChip';
 import './styles.scss';
-
-const colorsByCategory = {
-  Outros: '#d3d3d3',
-  Serviços: '#6B9DFE',
-  Trabalho: '#0000ff',
-  Aluguel: '#FFBC6E',
-  Internet: '#FE797A',
-};
 
 const theme = createTheme({
   ptBR,
   components: {
+    MuiDataGrid: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'Poppins',
+          color: '#666',
+          backgroundColor: '#fcfcfc',
+          borderRadius: '0.5rem',
+        },
+      },
+    },
     MuiTab: {
       styleOverrides: {
         root: {
@@ -28,6 +32,7 @@ const theme = createTheme({
           '&.Mui-selected': {
             backgroundColor: '#215DBE',
             color: '#F2F5FC',
+            fontWeight: 600,
           },
         },
       },
@@ -38,8 +43,16 @@ const theme = createTheme({
           alignItems: 'center',
         },
         indicator: {
-          backgroundColor: 'red',
           display: 'none',
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'Poppins',
+          height: '30px',
+          fontWeight: 500,
         },
       },
     },
@@ -52,14 +65,13 @@ const columns: GridColDef[] = [
     headerName: 'Situação',
     flex: 1,
     headerClassName: 'table__header__color',
-
     sortable: false,
     renderCell: (params: GridValueGetterParams) => {
       const situation = params.row.situation;
       if (situation === 'paga') {
-        return <Chip icon={<CheckOutlined fontSize='small' />} label='Paga' color='primary' />;
+        return <PaymentChip label='Pago' />;
       }
-      return <Chip icon={<CloseOutlined fontSize='small' />} label='Não paga' color='error' />;
+      return <PaymentChip label='Não pago' />;
     },
   },
   {
@@ -71,9 +83,9 @@ const columns: GridColDef[] = [
     renderCell: (params: GridValueGetterParams) => {
       const paymentMethod = params.row.payment;
       if (paymentMethod === 'Débito') {
-        return <Chip icon={<PaidOutlined fontSize='small' />} label='Débito' variant='outlined' />;
+        return <Chip icon={<PaidOutlined />} label='Débito' variant='outlined' />;
       }
-      return <Chip icon={<CreditCard fontSize='small' />} label='Crédito' variant='outlined' />;
+      return <Chip icon={<CreditCard />} label='Débito' variant='outlined' />;
     },
   },
   {
@@ -98,7 +110,7 @@ const columns: GridColDef[] = [
     align: 'left',
     renderCell: (params: GridCellParams) => {
       const category = params.value;
-      const color = colorsByCategory[category] || '#333';
+      const color = categoryColors[category] || '#333';
       return <Chip label={category} style={{ backgroundColor: color, color: '#ffffff' }} />;
     },
   },
@@ -186,39 +198,34 @@ const AllTransactions = () => {
     setSelectedTab(newValue);
 
   useEffect(() => {
-    if (selectedTab === 0) {
-      setTableData(rows);
-    } else if (selectedTab === 1) {
-      setTableData(rows.filter(row => row.situation !== 'Receita'));
-    } else if (selectedTab === 2) {
-      setTableData(rows.filter(row => row.situation === 'Receita'));
-    }
-  }, [selectedTab]);
+    const filterRows = row => {
+      if (selectedTab === 1) return row.situation !== 'Receita';
+      if (selectedTab === 2) return row.situation === 'Receita';
+      return true;
+    };
+    setTableData(rows.filter(filterRows));
+  }, [selectedTab, rows]);
 
   return (
-    <>
-      <ThemeProvider theme={theme}>
-        <div className='change__transaction__type'>
-          <h2>Transações</h2>
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <Box>
-              <Tabs value={selectedTab} onChange={handleTabChange}>
-                <Tab label='Tudo' />
-                <Tab label='Despesas' />
-                <Tab label='Receitas' />
-              </Tabs>
-            </Box>
-          </Box>
-        </div>
-        <DataGrid rows={tableData} columns={columns} autoHeight />
-      </ThemeProvider>
-    </>
+    <ThemeProvider theme={theme}>
+      <div className='change__transaction__type'>
+        <h2>Transações</h2>
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <Tabs value={selectedTab} onChange={handleTabChange}>
+            <Tab label='Tudo' />
+            <Tab label='Despesas' />
+            <Tab label='Receitas' />
+          </Tabs>
+        </Box>
+      </div>
+      <DataGrid rows={tableData} columns={columns} autoHeight />
+    </ThemeProvider>
   );
 };
 
