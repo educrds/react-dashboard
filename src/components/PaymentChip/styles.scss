@@ -1,0 +1,35 @@
+.payment__chip {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-weight: 500;
+
+  font-size: 0.8rem;
+  &.error {
+    .payment__icon {
+      background-color: #e63946;
+    }
+    .payment__label {
+      color: #e63946;
+    }
+  }
+  &.check {
+    .payment__icon {
+      background-color: #06d6a0;
+    }
+    .payment__label {
+      color: #06d6a0;
+    }
+  }
+  .payment__icon {
+    border-radius: 50%;
+    padding: 0.2vh 0.2vh;
+    color: #fff;
+    svg {
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
