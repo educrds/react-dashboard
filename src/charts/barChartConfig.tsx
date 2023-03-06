@@ -11,6 +11,11 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const options = {
+  elements: {
+    bar: {
+      borderRadius: 0,
+    },
+  },
   maintainAspectRatio: false,
   responsive: true,
   plugins: {
@@ -18,42 +23,27 @@ const options = {
       position: 'top' as const,
       align: 'end',
       labels: {
+        color: '#bfbfbf',
         font: {
           size: 13,
           family: 'Poppins',
         },
         usePointStyle: true,
-        padding: 15,
+        padding: 10,
       },
     },
     tooltip: {
       usePointStyle: true,
     },
-    title: {
-      display: true,
-      align: 'start',
-      color: '#bfbfbf',
-      font: {
-        size: 18,
-        family: 'Poppins',
-        weight: '500',
-      },
-      padding: {
-        top: 20,
-      },
-    },
-  },
-  elements: {
-    bar: {
-      borderRadius: 5,
-      backgroundColor: '#215DBE',
-    },
   },
   scales: {
     y: {
+      border: {
+        dash: [5, 6],
+        display: false,
+      },
       grid: {
         drawTicks: false,
-        display: false,
       },
       ticks: {
         font: {
