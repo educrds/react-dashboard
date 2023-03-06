@@ -15,28 +15,33 @@
     display: flex;
     align-items: center;
     gap: 5px;
+    a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
     span {
       opacity: 0.75;
       font-size: 1.1rem;
     }
+    svg {
+      display: flex;
+      align-items: center;
+    }
+    &.icon__green {
+      color: #22c58b;
+    }
+    &.icon__red {
+      color: #eb3d3d;
+    }
+    &.icon__grey {
+      color: map-get($colors, grey, light);
+    }
   }
-  .item__square__circle {
-    width: 15px;
-    height: 15px;
-    border-radius: 30%;
-    &.circle__green {
-      background-color: #22c58b;
-    }
-    &.circle__red {
-      background-color: #eb3d3d;
-    }
-    &.circle__blue {
-      background-color: map-get($colors, colorized, primary);
-    }
-  }
+
   .item__square__value {
     font-size: 2rem;
-    font-weight: 500;
+    font-weight: 400;
     color: map-get($colors, grey, dark);
   }
 }
