@@ -19,7 +19,7 @@ const Revenue = () => {
             {
               label: 'Receitas',
               data: [1000, 1500, 2000, 2500, 1800, 3000, 2500, 3000, 1000],
-              backgroundColor: '#bcffc6',
+              backgroundColor: '#60d394',
             },
           ]}
         />
