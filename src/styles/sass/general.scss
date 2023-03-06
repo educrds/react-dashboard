@@ -24,6 +24,14 @@ body {
   background: map-get($colors, colorized, secondary);
 }
 
+h1,
+h3,
+h2 {
+  color: map-get($colors, grey, dark);
+  font-weight: 500;
+  margin-bottom: 1vh;
+}
+
 #root {
   display: flex;
 }
