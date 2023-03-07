@@ -68,10 +68,10 @@ const columns: GridColDef[] = [
     sortable: false,
     renderCell: (params: GridValueGetterParams) => {
       const situation = params.row.situation;
-      if (situation === 'paga') {
-        return <PaymentChip label='Pago' />;
+      if (situation === 'Paga' || situation === 'Recebida') {
+        return <PaymentChip label={situation} />;
       }
-      return <PaymentChip label='Não pago' />;
+      return <PaymentChip label={situation} />;
     },
   },
   {
@@ -127,7 +127,7 @@ const columns: GridColDef[] = [
 const rows = [
   {
     id: 1,
-    situation: 'paga',
+    situation: 'Paga',
     payment: 'Débito',
     date: '03/03/2023',
     description: 'Garrafa de água - Shoppe',
@@ -136,7 +136,7 @@ const rows = [
   },
   {
     id: 2,
-    situation: 'A pagar',
+    situation: 'Não paga',
     payment: 'Crédito',
     date: '01/03/2023',
     description: 'Internet',
@@ -145,7 +145,7 @@ const rows = [
   },
   {
     id: 3,
-    situation: 'paga',
+    situation: 'Paga',
     payment: 'Débito',
     date: '10/03/2023',
     description: 'Claro Flex',
@@ -154,7 +154,7 @@ const rows = [
   },
   {
     id: 4,
-    situation: 'A pagar',
+    situation: 'Não paga',
     payment: 'Crédito',
     date: '13/03/2023',
     description: 'Macbook Air',
@@ -163,7 +163,7 @@ const rows = [
   },
   {
     id: 5,
-    situation: 'paga',
+    situation: 'Paga',
     payment: 'Débito',
     date: '01/03/2023',
     description: 'Aluguel',
@@ -172,7 +172,7 @@ const rows = [
   },
   {
     id: 6,
-    situation: 'Receita',
+    situation: 'Recebida',
     payment: 'PIX',
     date: '01/03/2023',
     description: 'Salário',
@@ -181,7 +181,7 @@ const rows = [
   },
   {
     id: 7,
-    situation: 'Receita',
+    situation: 'Recebida',
     payment: 'PIX',
     date: '01/03/2023',
     description: 'Freelancer',
