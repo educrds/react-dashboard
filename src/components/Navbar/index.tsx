@@ -8,12 +8,12 @@ import {
   ReceiptLongOutlined,
   ExitToAppOutlined,
   AddOutlined,
-  KeyboardDoubleArrowRightOutlined,
-  KeyboardDoubleArrowLeftOutlined,
+  KeyboardArrowRightRounded,
+  KeyboardArrowLeftRounded,
 } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { NavbarContext } from '../../contexts/NavbarContext';
-import IconMenu from '../AddMenu';
+import AddButtonMenu from '../AddMenu';
 
 const Navbar = () => {
   const [activeIndex, setActiveIndex] = useState(null);
@@ -32,7 +32,7 @@ const Navbar = () => {
         <ToggleButton onClick={handleCollapseToggle} collapsed={isCollapsed} />
         <div className='nav__menu'>
           <AddButton onClick={addHandleClick} text={renderText('Novo')} collapsed={isCollapsed} />
-          {addMenuOpen && <IconMenu />}
+          {addMenuOpen && <AddButtonMenu />}
           <NavButton
             icon={<GridViewOutlined />}
             text={renderText('Dashboard')}
@@ -100,7 +100,7 @@ interface ToggleButtonProps {
 const ToggleButton = ({ onClick, collapsed }: ToggleButtonProps) => {
   return (
     <div className='nav__toggle' onClick={onClick}>
-      {collapsed ? <KeyboardDoubleArrowRightOutlined /> : <KeyboardDoubleArrowLeftOutlined />}
+      {collapsed ? <KeyboardArrowRightRounded /> : <KeyboardArrowLeftRounded />}
     </div>
   );
 };

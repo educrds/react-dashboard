@@ -55,7 +55,7 @@ const Charts = () => {
 const MenuBar = () => {
   return (
     <div className='dashboard__bar'>
-      <h1>Dashboard</h1>
+      <h2>Dashboard</h2>
       <img
         src='https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG.png'
         alt='profile photo'

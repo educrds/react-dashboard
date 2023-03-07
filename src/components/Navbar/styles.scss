@@ -44,13 +44,15 @@ nav {
       color: #bfbfbf85;
       display: flex;
       align-items: center;
+      background-color: #cccccc20;
+      color: #ccc;
+      border-radius: 50%;
       svg {
         font-size: 1.35rem;
       }
       &:hover {
+        color: #bbb;
         background-color: #cccccc50;
-        color: #bfbfbf;
-        border-radius: 50%;
       }
     }
     .logo {
