@@ -1,15 +1,13 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import AllTransactions from '../../components/AllTransactions';
-import { NavbarContext } from '../../contexts/NavbarContext';
 import BarChart from '../../components/ChartBar';
 import ExpenseDoughnutChart from '../../components/DoughnutChart/Expenses';
+import Wrapper from '../../components/Wrapper';
 import './styles.scss';
 
 const Expenses = () => {
-  const { collapsed } = useContext(NavbarContext);
-
   return (
-    <div className={`wrapper ${collapsed && 'collapsed'}`}>
+    <Wrapper>
       <h2>Despesas</h2>
       <div className='revenue__charts'>
         <ExpenseDoughnutChart />
@@ -19,13 +17,13 @@ const Expenses = () => {
             {
               label: 'Despesas',
               data: [1000, 1500, 2000, 2500, 1800, 3000, 2500, 3000, 1000],
-              backgroundColor: '#ee6055'
+              backgroundColor: '#ee6055',
             },
           ]}
         />
       </div>
       <AllTransactions />
-    </div>
+    </Wrapper>
   );
 };
 

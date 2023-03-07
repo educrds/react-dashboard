@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Routes, Outlet } from 'react-router-dom';
 import './styles/css/style.css';
 import Dashboard from './pages/Dashboard';
@@ -8,14 +8,11 @@ import Transactions from './pages/Transactions';
 import Navbar from './components/Navbar';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
-import { NavbarContext } from './contexts/NavbarContext';
+import { NavbarContextProvider } from './contexts/NavbarContext';
 
 const App: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const handleCollapseToggle = () => setCollapsed(!collapsed);
-
   return (
-    <NavbarContext.Provider value={{ collapsed, setCollapsed }}>
+    <NavbarContextProvider>
       <BrowserRouter>
         <Routes>
           <Route element={<Outlet />}>
@@ -24,7 +21,7 @@ const App: React.FC = () => {
             <Route
               element={
                 <>
-                  <Navbar isCollapsed={collapsed} toggleClick={handleCollapseToggle} />
+                  <Navbar />
                   <Outlet />
                 </>
               }
@@ -37,7 +34,7 @@ const App: React.FC = () => {
           </Route>
         </Routes>
       </BrowserRouter>
-    </NavbarContext.Provider>
+    </NavbarContextProvider>
   );
 };
 

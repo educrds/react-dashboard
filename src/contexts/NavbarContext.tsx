@@ -1,10 +1,31 @@
-import { createContext } from 'react';
+import React, { createContext, useState, FC } from 'react';
+
 interface INavbarContext {
-  collapsed: boolean;
-  setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  handleCollapseToggle: () => void;
+  isCollapsed: boolean;
 }
 
 export const NavbarContext = createContext<INavbarContext>({
-  collapsed: false,
-  setCollapsed: collapsed => {},
+  handleCollapseToggle: () => {},
+  isCollapsed: false,
 });
+
+interface NavbarContextProviderProps {
+  children: React.ReactNode;
+}
+
+export const NavbarContextProvider: FC<NavbarContextProviderProps> = ({ children }) => {
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+  const handleCollapseToggle = () => setCollapsed(!collapsed);
+
+  return (
+    <NavbarContext.Provider
+      value={{
+        handleCollapseToggle,
+        isCollapsed: !!collapsed,
+      }}
+    >
+      {children}
+    </NavbarContext.Provider>
+  );
+};

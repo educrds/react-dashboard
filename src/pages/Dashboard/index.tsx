@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import DashboardOverview from '../../components/DashboardOverview';
 import BarChart from '../../components/ChartBar';
 import AllTransactions from '../../components/AllTransactions';
-import { NavbarContext } from '../../contexts/NavbarContext';
 import ExpenseDoughnutChart from '../../components/DoughnutChart/Expenses';
 import RevenueDoughnutChart from '../../components/DoughnutChart/Revenue';
+import Wrapper from '../../components/Wrapper';
 import './styles.scss';
 
 const data = [
@@ -21,15 +21,13 @@ const data = [
 ];
 
 const Dashboard = () => {
-  const { collapsed } = useContext(NavbarContext);
-
   return (
-    <div className={`wrapper ${collapsed && 'collapsed'}`}>
+    <Wrapper>
       <MenuBar />
       <DashboardOverview />
       <Charts />
       <AllTransactions />
-    </div>
+    </Wrapper>
   );
 };
 
