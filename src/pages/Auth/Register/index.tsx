@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import AuthButton from '../../../components/AuthButton';
 import Brand from '../../../components/Brand';
-import GoogleTag from '../../../components/GoogleTag';
+import GoogleAuthButton from '../../../components/GoogleAuthButton';
 import PasswordInput from '../../../components/Inputs/PasswordInput';
 import '../styles.scss';
 import illustration from '../../../assets/imgs/money-rafiki.png';
@@ -37,7 +37,7 @@ const Register = () => {
     <div className='flex__container'>
       <div className='main__container'>
         <Brand />
-        <GoogleTag text='Cadastre-se com Google' />
+        <GoogleAuthButton text='Cadastre-se com Google' />
         <div className='container'>
           <hr className='line' />
           <p>OU</p>

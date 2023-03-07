@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useContext } from 'react';
 import Brand from '../Brand';
 import './styles.scss';
 import {
@@ -26,9 +26,11 @@ const Navbar = ({ toggleClick, isCollapsed }: NavbarProps) => {
   const [addMenuOpen, setAddMenuOpen] = useState(false);
 
   const handleClick = (index: number | null): void => setActiveIndex(index);
-  const renderText = (text: string): JSX.Element | null => !collapsed ? <span>{text}</span> : null;
+  const renderText = (text: string): JSX.Element | null =>
+    !collapsed ? <span>{text}</span> : null;
   const addHandleClick = () => setAddMenuOpen(!addMenuOpen);
-  
+  const handleLogout = () => localStorage.clear();
+
   return (
     <nav className={`${isCollapsed && 'collapsed'}`}>
       <div className={'nav__wrapper'}>
@@ -70,7 +72,7 @@ const Navbar = ({ toggleClick, isCollapsed }: NavbarProps) => {
             to='/transacoes'
           />
         </div>
-        <LogoutButton onClick={() => {}} text={renderText('Sair')} />
+        <LogoutButton onClick={handleLogout} text={renderText('Sair')} />
       </div>
     </nav>
   );

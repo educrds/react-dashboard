@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import AuthButton from '../../../components/AuthButton';
 import Brand from '../../../components/Brand';
-import GoogleTag from '../../../components/GoogleTag';
+import GoogleAuthButton from '../../../components/GoogleAuthButton';
 import PasswordInput from '../../../components/Inputs/PasswordInput';
 import '../styles.scss';
 import illustration from '../../../assets/imgs/money-rafiki.png';
@@ -10,10 +10,12 @@ import { Link } from 'react-router-dom';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../../services/firebaseConfig';
 import { MdOutlineMarkEmailRead } from 'react-icons/md';
+import { AuthenticateContext } from '../../../contexts/AuthenticateContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { setUser } = useContext(AuthenticateContext);
   const [sendEmailPasswordReset, setSendEmailPasswordReset] = useState(false);
 
   // Responsável por logar uma conta de usuário com email e senha através da função signInWithEmailAndPassword do Firebase.
@@ -22,6 +24,7 @@ const Login = () => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       console.log(user);
+      setUser(user);
     } catch (error) {
       console.log(error);
     }
@@ -52,7 +55,7 @@ const Login = () => {
     <div className='flex__container'>
       <div className='main__container'>
         <Brand />
-        <GoogleTag text='Entrar com Google' />
+        <GoogleAuthButton text='Entrar com Google' />
         <Line />
         {sendEmailPasswordReset && <AlertMessage />}
         <Input
