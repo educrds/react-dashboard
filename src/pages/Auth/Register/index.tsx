@@ -4,7 +4,7 @@ import Brand from '../../../components/Brand';
 import GoogleAuthButton from '../../../components/GoogleAuthButton';
 import PasswordInput from '../../../components/Inputs/PasswordInput';
 import '../styles.scss';
-import illustration from '../../../assets/imgs/money-rafiki.png';
+import illustration from '../../../assets/imgs/illustration.png';
 import Input from '../../../components/Inputs/Input';
 import { Link } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
