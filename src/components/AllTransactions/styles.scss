@@ -3,12 +3,13 @@
 .table__header__color {
   background-color: map-get($colors, colorized, primary);
   color: map-get($colors, white, secondary);
-  font-family: 'Poppins';
   button {
     color: map-get($colors, white, secondary);
   }
 }
-
 .change__transaction__type {
   display: flex;
+  div {
+    margin-left: auto;
+  }
 }

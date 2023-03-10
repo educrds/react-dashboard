@@ -210,13 +210,7 @@ const AllTransactions = () => {
     <ThemeProvider theme={theme}>
       <div className='change__transaction__type'>
         <h2>Transações</h2>
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'flex-end',
-          }}
-        >
+        <Box>
           <Tabs value={selectedTab} onChange={handleTabChange}>
             <Tab label='Tudo' />
             <Tab label='Despesas' />
@@ -224,7 +218,7 @@ const AllTransactions = () => {
           </Tabs>
         </Box>
       </div>
-      <DataGrid rows={tableData} columns={columns} autoHeight />
+      <DataGrid rows={tableData} columns={columns} autoHeight/>
     </ThemeProvider>
   );
 };
