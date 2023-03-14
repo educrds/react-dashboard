@@ -4,7 +4,7 @@ import { MenuList, MenuItem, ListItemText, ListItemIcon } from '@mui/material';
 import { TrendingDownOutlined, TrendingUpOutlined } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Divider } from '@mui/material';
-import AddTransactionForm from '../AddTransactionForm';
+import AddTransactionModal from '../AddTransactionModal';
 
 const theme = createTheme({
   components: {
@@ -80,7 +80,7 @@ const AddButtonMenu = () => {
           </MenuItem>
         </MenuList>
       </Paper>
-      <AddTransactionForm onClose={handleClose} open={open} type='despesa' />
+      <AddTransactionModal onClose={handleClose} open={open} type='despesa' />
     </ThemeProvider>
   );
 };
