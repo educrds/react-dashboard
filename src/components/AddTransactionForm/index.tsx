@@ -1,53 +1,32 @@
 import React, { useState } from 'react';
 import {
-  Typography,
-  IconButton,
-  AppBar,
-  Toolbar,
   FormControlLabel,
   TextField,
-  Modal,
   InputAdornment,
-  Box,
   Chip,
   Button,
   Grid,
-  Container,
   Switch,
-  Autocomplete,
-  Paper,
+  MenuItem,
+  Box,
+  IconButton,
 } from '@mui/material';
 import {
-  CloseRounded,
   AccountBalanceWalletRounded,
   DescriptionRounded,
   LabelRounded,
+  Backspace,
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import numeral from 'numeral';
+import { categories } from '../../charts/doughnutChartConfig';
+import { MainGrid, InputBoxIcon, ButtonBox } from './styles';
 
-interface AddTransactionFormProps {
-  open: boolean;
-  onClose: () => {};
-}
-
-const categories = [
-  { id: 1, name: 'Categoria 1' },
-  { id: 2, name: 'Categoria 2' },
-  { id: 3, name: 'Categoria 3' },
-  { id: 4, name: 'Categoria 4' },
-  { id: 5, name: 'Categoria 5' },
-];
-
-type CustomInputProps = TextFieldProps & {
-  ownerState?: any;
-  label?: string;
-};
-
-const CustomInput = function CustomInput(props: CustomInputProps) {
-  const { inputProps, InputProps, ownerState, inputRef, error, label, ...other } = props;
+const CustomInput = function CustomInput(props) {
+  const { InputProps } = props;
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }} ref={InputProps?.ref}>
@@ -56,151 +35,233 @@ const CustomInput = function CustomInput(props: CustomInputProps) {
   );
 };
 
-const AddTransactionForm = ({ open, onClose }: AddTransactionFormProps) => {
-  const [selectedOption, setSelectedOption] = useState('');
-  const [selectedChipIndex, setSelectedChipIndex] = useState(0);
-  const [date, setDate] = useState(null);
-  // const [showDatePicker, setShowDatePicker] = useState(false);
+const AddTransactionForm = () => {
+  const [formData, setFormData] = useState({
+    status: false,
+    category: null,
+    description: null,
+    value: '0,00',
+  });
 
-  const handleOptionChange = (event, value) => setSelectedOption(value);
+  const handleValueChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const unformattedValue = event.target.value.replace(/\D/g, '');
+    const formattedValue = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(Number(unformattedValue) / 100);
 
-  const handleChipClick = index => setSelectedChipIndex(index);
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      value: formattedValue,
+    }));
+  };
+
+  const handleStatusCheck = () =>
+    setFormData(prevFormData => ({ ...prevFormData, status: !prevFormData.status }));
+
+  const handleCategoryChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      category: event.target.value,
+    }));
+
+  const handleDescriptionChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      description: event.target.value,
+    }));
+
+  const handleDateChange = newDate =>
+    setFormData(prevFormData => ({ ...prevFormData, date: newDate }));
+
+  const handleSubmit = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    event.preventDefault();
+    console.log(formData);
+  };
 
   return (
-    <Modal
-      open={open}
-      aria-labelledby='modal-title'
-      aria-describedby='modal-description'
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Container
-        component='main'
-        maxWidth='sm'
-        sx={{ backgroundColor: '#fff', borderRadius: '.5rem' }}
+    <form onSubmit={handleSubmit}>
+      <MainGrid container>
+        <Grid item md={12}>
+          <InputWithIcon
+            icon={<AccountBalanceWalletRounded />}
+            onChange={handleValueChange}
+            value={formData.value}
+          />
+          <Box>
+            <FormControlLabel
+              label='Recebida'
+              labelPlacement='end'
+              control={<Switch color='primary' />}
+              onChange={handleStatusCheck}
+            />
+          </Box>
+        </Grid>
+        <Grid item md={12}>
+          <DateInput onDateChange={handleDateChange} />
+        </Grid>
+        <Grid item md={12}>
+          <InputWithIcon
+            icon={<DescriptionRounded />}
+            onChange={handleDescriptionChange}
+            placeholder='Descrição'
+            value={formData.description}
+          />
+        </Grid>
+        <Grid item md={12}>
+          <CategoryInput
+            categories={categories}
+            category={formData.category}
+            handleCategoryChange={handleCategoryChange}
+          />
+        </Grid>
+        <Grid item>
+          <ButtonBox>
+            <Button variant='contained' type='submit'>
+              Salvar
+            </Button>
+          </ButtonBox>
+        </Grid>
+      </MainGrid>
+    </form>
+  );
+};
+
+interface InputWithIconProps {
+  icon: ReactNode;
+  value?: string;
+  placeholder?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+const InputWithIcon = ({ icon, value, placeholder, onChange }: InputWithIconProps) => {
+  return (
+    <InputBoxIcon>
+      {icon}
+      <TextField
+        id='input-with-sx'
+        variant='standard'
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        fullWidth
+      />
+    </InputBoxIcon>
+  );
+};
+
+interface CategoryInputProps {
+  categories: [];
+  category: string;
+  handleCategoryChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
+}
+
+const CategoryInput = ({ categories, category, handleCategoryChange }: CategoryInputProps) => {
+  const handleCategoryDelete = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    event.stopPropagation();
+    handleCategoryChange({ target: { value: null } });
+  };
+  const renderCategory = category => <Chip label={category} onDelete={handleCategoryDelete} />;
+
+  return (
+    <InputBoxIcon>
+      <LabelRounded />
+      <TextField
+        id='my-textfield'
+        label='Categoria'
+        variant='standard'
+        fullWidth
+        select
+        value={category}
+        onChange={handleCategoryChange}
+        SelectProps={{
+          renderValue: () => renderCategory(category),
+        }}
       >
-        <AppBar
-          position='static'
-          sx={{
-            borderRadius: '8px 8px 0 0',
-            color: '#666',
-            backgroundColor: '#fff',
-            boxShadow: 'none',
-            borderBottom: '1px solid #bfbfbf90',
-          }}
-        >
-          <Toolbar>
-            <Typography variant='h5' component='div' sx={{ flexGrow: 1, color: '#666' }}>
-              Nova receita
-            </Typography>
-            <IconButton onClick={onClose} sx={{ color: 'inherit' }}>
-              <CloseRounded />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <form onSubmit={() => {}}>
-          <Grid container rowGap={3} sx={{ my: 3, display: 'flex', flexDirection: 'column' }}>
-            <Grid item md={12}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <AccountBalanceWalletRounded sx={{ color: 'action.active' }} />
-                <TextField
-                  id='input-with-sx'
-                  variant='standard'
-                  fullWidth
-                  InputProps={{
-                    startAdornment: <InputAdornment position='start'>R$</InputAdornment>,
-                  }}
-                />
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <FormControlLabel
-                  label='Paga'
-                  labelPlacement='end'
-                  control={<Switch color='primary' />}
-                />
-              </Box>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant='standard'
-                fullWidth
-                InputProps={{
-                  readOnly: true,
-                  startAdornment: (
-                    <Box sx={{ display: 'flex', gap: 0.5, py: 1 }}>
-                      <Chip
-                        label='Hoje'
-                        clickable
-                        onClick={() => handleChipClick(0)}
-                        color={selectedChipIndex === 0 ? 'primary' : 'default'}
-                      />
-                      <Chip
-                        label='Ontem'
-                        clickable
-                        onClick={() => handleChipClick(1)}
-                        color={selectedChipIndex === 1 ? 'primary' : 'default'}
-                      />
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                          value={date}
-                          slots={{
-                            textField: CustomInput,
-                          }}
-                        />
-                      </LocalizationProvider>
-                    </Box>
-                  ),
+        {categories
+          .filter(({ type }) => type === 'receita')
+          .map(({ category }, i) => (
+            <MenuItem key={i} value={category}>
+              {category}
+            </MenuItem>
+          ))}
+      </TextField>
+    </InputBoxIcon>
+  );
+};
+
+interface DateInputProps {
+  onDateChange: (date: Date | null, value?: string | null) => void;
+}
+
+const DateInput = ({ onDateChange }: DateInputProps) => {
+  const [date, setDate] = useState<string>('');
+  const [selectedChipIndex, setSelectedChipIndex] = useState<number>(-1);
+
+  const formatDate = (date: number) => dayjs(date).format('DD/MM/YYYY');
+
+  const selectDate = (index: number) => {
+    const today = dayjs();
+    const yesterday = today.subtract(1, 'day');
+
+    return index === 0 ? formatDate(today) : formatDate(yesterday);
+  };
+
+  const handleChipClick = (chipIndex: number) => {
+    setSelectedChipIndex(chipIndex);
+    setDate(selectDate(chipIndex));
+  };
+
+  const handleDateChange = newDate => {
+    setDate(formatDate(newDate));
+    setSelectedChipIndex(-1);
+    onDateChange(newDate);
+  };
+
+  return (
+    <TextField
+      variant='standard'
+      fullWidth
+      value={date}
+      onChange={date ? handleDateChange : () => {}}
+      InputProps={{
+        readOnly: true,
+        endAdornment: (
+          <InputAdornment position='end'>
+            {date && (
+              <IconButton onClick={() => setDate('')}>
+                <Backspace fontSize='small' />
+              </IconButton>
+            )}
+          </InputAdornment>
+        ),
+        startAdornment: !date && (
+          <Box sx={{ display: 'flex', gap: 0.5, py: 1 }}>
+            <Chip
+              label='Hoje'
+              clickable
+              onClick={() => handleChipClick(0)}
+              color={selectedChipIndex === 0 ? 'primary' : 'default'}
+            />
+            <Chip
+              label='Ontem'
+              clickable
+              onClick={() => handleChipClick(1)}
+              color={selectedChipIndex === 1 ? 'primary' : 'default'}
+            />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                value={date}
+                onChange={handleDateChange}
+                slots={{
+                  textField: CustomInput,
                 }}
               />
-            </Grid>
-            <Grid item md={12}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <DescriptionRounded sx={{ color: 'action.active' }} />
-                <TextField
-                  id='input-with-sx'
-                  variant='standard'
-                  placeholder='Descrição'
-                  fullWidth
-                />
-              </Box>
-            </Grid>
-            <Grid item md={12}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <LabelRounded sx={{ color: 'action.active' }} />
-                <Autocomplete
-                  fullWidth
-                  freeSolo={false}
-                  id='tags-standard'
-                  options={categories}
-                  value={selectedOption}
-                  onChange={handleOptionChange}
-                  getOptionLabel={option => option.name}
-                  renderInput={params => (
-                    <TextField
-                      {...params}
-                      variant='standard'
-                      label='Categoria'
-                      placeholder='Selecione uma categoria'
-                    />
-                  )}
-                />
-              </Box>
-            </Grid>
-
-            <Grid item>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignSelf: 'flex-end' }}>
-                <Button variant='contained' onClick={() => {}} sx={{ mt: 1 }}>
-                  Salvar
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-        </form>
-      </Container>
-    </Modal>
+            </LocalizationProvider>
+          </Box>
+        ),
+      }}
+    />
   );
 };
 
