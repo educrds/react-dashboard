@@ -21,7 +21,6 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import numeral from 'numeral';
 import { categories } from '../../charts/doughnutChartConfig';
 import { MainGrid, InputBoxIcon, ButtonBox } from './styles';
 
