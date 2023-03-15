@@ -19,7 +19,7 @@ import {
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs from 'dayjs';
+import moment from 'moment';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { categories } from '../../charts/doughnutChartConfig';
 import { collection, addDoc } from 'firebase/firestore';
@@ -68,16 +68,14 @@ const AddTransactionForm = () => {
     date: '',
   });
 
-  const handleValueChange = event => {
-    console.log(event.target.value);
+  const handleValueChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     setFormData(prevFormData => ({
       ...prevFormData,
       value: event.target.value,
     }));
   };
 
-  const handleStatusCheck = () =>
-    setFormData(prevFormData => ({ ...prevFormData, status: !prevFormData.status }));
+  const handleStatusCheck = () => setFormData(prevFormData => ({ ...prevFormData, status: !prevFormData.status }));
 
   const handleCategoryChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
     setFormData(prevFormData => ({
@@ -91,11 +89,7 @@ const AddTransactionForm = () => {
       description: event.target.value,
     }));
 
-  const handleDateChange = newDate =>
-    setFormData(prevFormData => ({ ...prevFormData, date: newDate }));
-
-  // 1. Formatar data como timestamp para enviar para BD
-  // 2. Formatar para ser enviado apenas número no field Valor
+  const handleDateChange = newDate => setFormData(prevFormData => ({ ...prevFormData, date: newDate }));
 
   const handleSubmit = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.preventDefault();
@@ -241,41 +235,40 @@ interface DateInputProps {
 }
 
 const DateInput = ({ onDateChange }: DateInputProps) => {
-  const [date, setDate] = useState<string>('');
+  const [date, setDate] = useState<number>();
   const [selectedChipIndex, setSelectedChipIndex] = useState<number>(-1);
 
-  const formatDate = (date: number) => dayjs(date).format('DD/MM/YYYY');
+  const formatDate = (date: number) => moment(date).unix();
 
-  const selectDate = (index: number) => {
-    const today = dayjs();
-    const yesterday = today.subtract(1, 'day');
-
-    return index === 0 ? formatDate(today) : formatDate(yesterday);
+  const setDateFromChipIndex = (index: number) => {
+    const today = moment();
+    const yesterday = moment().subtract(1, 'day');
+    const newDate = index === 0 ? today : yesterday;
+    const formattedDate = formatDate(newDate);
+    setSelectedChipIndex(index);
+    setDate(formattedDate);
+    onDateChange(formattedDate);
   };
 
-  const handleChipClick = (chipIndex: number) => {
-    setSelectedChipIndex(chipIndex);
-    setDate(selectDate(chipIndex));
-  };
-
-  const handleDateChange = newDate => {
-    setDate(formatDate(newDate));
+  const handleDateChange = (newDate: moment.Moment) => {
+    const formattedDate = formatDate(newDate);
+    setDate(formattedDate);
     setSelectedChipIndex(-1);
-    onDateChange(newDate);
+    onDateChange(formattedDate);
   };
 
   return (
     <TextField
       variant='standard'
       fullWidth
-      value={date}
+      value={date ? moment.unix(date).format('DD/MM/YYYY') : ''}
       onChange={date ? handleDateChange : () => {}}
       InputProps={{
         readOnly: true,
         endAdornment: (
           <InputAdornment position='end'>
             {date && (
-              <IconButton onClick={() => setDate('')}>
+              <IconButton onClick={() => setDate(undefined)}>
                 <Backspace fontSize='small' />
               </IconButton>
             )}
@@ -286,18 +279,18 @@ const DateInput = ({ onDateChange }: DateInputProps) => {
             <Chip
               label='Hoje'
               clickable
-              onClick={() => handleChipClick(0)}
+              onClick={() => setDateFromChipIndex(0)}
               color={selectedChipIndex === 0 ? 'primary' : 'default'}
             />
             <Chip
               label='Ontem'
               clickable
-              onClick={() => handleChipClick(1)}
+              onClick={() => setDateFromChipIndex(1)}
               color={selectedChipIndex === 1 ? 'primary' : 'default'}
             />
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                value={date}
+                value={date ? moment.unix(date) : null}
                 onChange={handleDateChange}
                 slots={{
                   textField: CustomInput,
