@@ -1,9 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import type { FirebaseApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: 'AIzaSyD4c636T6DeiuKGLRd5eONN_PFXTuUtepA',
   authDomain: 'react-dashboad.firebaseapp.com',
@@ -18,5 +17,6 @@ const firebaseConfig = {
 const app: FirebaseApp = initializeApp(firebaseConfig);
 const provider = new GoogleAuthProvider();
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-export { provider, auth };
+export { provider, auth, db };

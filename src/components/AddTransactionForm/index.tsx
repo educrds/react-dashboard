@@ -22,7 +22,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { categories } from '../../charts/doughnutChartConfig';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../../services/firebaseConfig';
 import { MainGrid, InputBoxIcon, ButtonBox } from './styles';
+import { NumericFormat } from 'react-number-format';
 
 const CustomInput = function CustomInput(props) {
   const { InputProps } = props;
@@ -34,24 +37,42 @@ const CustomInput = function CustomInput(props) {
   );
 };
 
+function NumericFormatCustom(props) {
+  const { inputRef, onChange, ...other } = props;
+  return (
+    <NumericFormat
+      {...other}
+      inputRef={inputRef}
+      onValueChange={values => {
+        onChange({
+          target: {
+            name: props.name,
+            value: values.floatValue,
+          },
+        });
+      }}
+      decimalSeparator=','
+      thousandSeparator='.'
+      decimalScale={2}
+      fixedDecimalScale
+    />
+  );
+}
+
 const AddTransactionForm = () => {
   const [formData, setFormData] = useState({
     status: false,
-    category: null,
-    description: null,
-    value: '0,00',
+    category: '',
+    description: '',
+    value: '',
+    date: '',
   });
 
-  const handleValueChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const unformattedValue = event.target.value.replace(/\D/g, '');
-    const formattedValue = new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(Number(unformattedValue) / 100);
-
+  const handleValueChange = event => {
+    console.log(event.target.value);
     setFormData(prevFormData => ({
       ...prevFormData,
-      value: formattedValue,
+      value: event.target.value,
     }));
   };
 
@@ -73,20 +94,42 @@ const AddTransactionForm = () => {
   const handleDateChange = newDate =>
     setFormData(prevFormData => ({ ...prevFormData, date: newDate }));
 
+  // 1. Formatar data como timestamp para enviar para BD
+  // 2. Formatar para ser enviado apenas número no field Valor
+
   const handleSubmit = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.preventDefault();
-    console.log(formData);
+
+    const sendData = async () => {
+      try {
+        const docRef = await addDoc(collection(db, 'revenues'), formData);
+        console.log('Document written with ID: ', docRef.id);
+      } catch (error) {
+        console.error('Error adding document: ', error);
+      }
+    };
+
+    sendData();
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <MainGrid container>
         <Grid item md={12}>
-          <InputWithIcon
-            icon={<AccountBalanceWalletRounded />}
-            onChange={handleValueChange}
-            value={formData.value}
-          />
+          <InputBoxIcon>
+            <AccountBalanceWalletRounded />
+            <TextField
+              value={formData.value}
+              onChange={handleValueChange}
+              variant='standard'
+              fullWidth
+              name='formattedValue'
+              InputProps={{
+                inputComponent: NumericFormatCustom,
+                startAdornment: <InputAdornment position='start'>R$ </InputAdornment>,
+              }}
+            />
+          </InputBoxIcon>
           <Box>
             <FormControlLabel
               label='Recebida'
@@ -127,13 +170,14 @@ const AddTransactionForm = () => {
 };
 
 interface InputWithIconProps {
-  icon: ReactNode;
+  icon: React.ReactNode;
   value?: string;
   placeholder?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  adornment: boolean;
 }
 
-const InputWithIcon = ({ icon, value, placeholder, onChange }: InputWithIconProps) => {
+const InputWithIcon = ({ icon, value, placeholder, onChange, adornment }: InputWithIconProps) => {
   return (
     <InputBoxIcon>
       {icon}
@@ -144,6 +188,9 @@ const InputWithIcon = ({ icon, value, placeholder, onChange }: InputWithIconProp
         onChange={onChange}
         placeholder={placeholder}
         fullWidth
+        InputProps={
+          adornment && { startAdornment: <InputAdornment position='start'>R$</InputAdornment> }
+        }
       />
     </InputBoxIcon>
   );
