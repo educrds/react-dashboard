@@ -1,9 +1,13 @@
-import { Modal, Container, Divider, AppBar, Typography } from '@mui/material';
+import { Modal, Container, Divider, AppBar } from '@mui/material';
 import { styled } from '@mui/material';
 
 const ModalContainer = styled(Modal)({
   display: 'flex',
   alignItems: 'center',
+
+  '& *': {
+    fontFamily: 'Poppins',
+  },
 });
 
 const InnerContainer = styled(Container)({
@@ -21,11 +25,15 @@ const Bar = styled(AppBar)({
   color: '#666',
   backgroundColor: '#fff',
   boxShadow: 'none',
+
+  '& .MuiToolbar-root': {
+    padding: 0,
+  },
+
+  '& .MuiTypography-root': {
+    flexGrow: 1,
+    color: '#666',
+  },
 });
 
-const BarTitle = styled(Typography)({
-  flexGrow: 1,
-  color: '#666',
-});
-
-export { ModalContainer, InnerContainer, BorderDivider, Bar, BarTitle };
+export { ModalContainer, InnerContainer, BorderDivider, Bar };

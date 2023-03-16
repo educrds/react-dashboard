@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconButton, Toolbar } from '@mui/material';
+import { IconButton, Toolbar, Typography } from '@mui/material';
 import { CloseRounded } from '@mui/icons-material';
 import { ModalContainer, InnerContainer, BorderDivider, Bar, BarTitle } from './styles';
 
@@ -19,7 +19,7 @@ const AddTransactionModal = ({ open, onClose, type }: AddTransactionModalProps) 
       <InnerContainer maxWidth='xs'>
         <Bar position='static'>
           <Toolbar>
-            <BarTitle variant='h5'>{transactionType}</BarTitle>
+            <Typography variant='h5'>{transactionType}</Typography>
             <IconButton onClick={onClose}>
               <CloseRounded />
             </IconButton>

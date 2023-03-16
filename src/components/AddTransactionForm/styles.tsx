@@ -6,7 +6,11 @@ const MainGrid = styled(Grid)({
   marginBottom: '3vh',
   display: 'flex',
   flexDirection: 'column',
-  rowGap: '4vh',
+  rowGap: '3.5vh',
+
+  '& .MuiSvgIcon-root': {
+    color: '#888',
+  },
 });
 
 const InputBoxIcon = styled(Box)({
@@ -19,7 +23,29 @@ const InputBoxIcon = styled(Box)({
 const ButtonBox = styled(Box)({
   display: 'flex',
   justifyContent: 'flex-end',
-  alignSelf: 'flex-end',
+  marginTop: '2vh',
+  marginBottom: '1.5vh',
+
+  '& .MuiButtonBase-root': {
+    backgroundColor: '#666',
+    borderRadius: '.5rem',
+    textTransform: 'capitalize',
+    paddingLeft: '3vw',
+    paddingRight: '3vw',
+    fontSize: '1rem',
+  },
 });
 
-export { MainGrid, InputBoxIcon, ButtonBox };
+const ToggleContainer = styled(Box)({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  marginBottom: '-16px',
+
+  '& .MuiFormControlLabel-root': {
+    marginRight: 0,
+    fontFamily: 'Poppins',
+    color: '#bfbfbf',
+  },
+});
+
+export { MainGrid, InputBoxIcon, ButtonBox, ToggleContainer };
