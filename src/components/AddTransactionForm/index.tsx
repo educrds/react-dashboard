@@ -59,7 +59,11 @@ function NumericFormatCustom(props) {
   );
 }
 
-const AddTransactionForm = () => {
+interface AddTransactionFormProps {
+  transactionType: string;
+}
+
+const AddTransactionForm = ({ transactionType }: AddTransactionFormProps) => {
   const [formData, setFormData] = useState({
     status: false,
     category: '',
@@ -68,6 +72,9 @@ const AddTransactionForm = () => {
     date: '',
   });
 
+  const collectionName = transactionType === 'receita' ? 'revenues' : 'expenses';
+  const uid = 'iVmUSglTCiR0GvPdWNzMzstEb3R2';
+
   const handleValueChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     setFormData(prevFormData => ({
       ...prevFormData,
@@ -75,7 +82,8 @@ const AddTransactionForm = () => {
     }));
   };
 
-  const handleStatusCheck = () => setFormData(prevFormData => ({ ...prevFormData, status: !prevFormData.status }));
+  const handleStatusCheck = () =>
+    setFormData(prevFormData => ({ ...prevFormData, status: !prevFormData.status }));
 
   const handleCategoryChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
     setFormData(prevFormData => ({
@@ -89,14 +97,18 @@ const AddTransactionForm = () => {
       description: event.target.value,
     }));
 
-  const handleDateChange = newDate => setFormData(prevFormData => ({ ...prevFormData, date: newDate }));
+  const handleDateChange = newDate =>
+    setFormData(prevFormData => ({ ...prevFormData, date: newDate }));
 
+  // Alterar de acordo com o tipo de transação
   const handleSubmit = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.preventDefault();
-
     const sendData = async () => {
       try {
-        const docRef = await addDoc(collection(db, 'revenues'), formData);
+        const docRef = await addDoc(
+          collection(db, `transactions/${uid}/${collectionName}`),
+          formData
+        );
         console.log('Document written with ID: ', docRef.id);
       } catch (error) {
         console.error('Error adding document: ', error);
@@ -126,7 +138,7 @@ const AddTransactionForm = () => {
           </InputBoxIcon>
           <Box>
             <FormControlLabel
-              label='Recebida'
+              label={transactionType === 'receita' ? 'Recebida' : 'Paga'}
               labelPlacement='end'
               control={<Switch color='primary' />}
               onChange={handleStatusCheck}
@@ -149,6 +161,7 @@ const AddTransactionForm = () => {
             categories={categories}
             category={formData.category}
             handleCategoryChange={handleCategoryChange}
+            transactionType={transactionType}
           />
         </Grid>
         <Grid item>
@@ -194,14 +207,21 @@ interface CategoryInputProps {
   categories: [];
   category: string;
   handleCategoryChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
+  transactionType: string;
 }
 
-const CategoryInput = ({ categories, category, handleCategoryChange }: CategoryInputProps) => {
+const CategoryInput = ({
+  categories,
+  category,
+  handleCategoryChange,
+  transactionType,
+}: CategoryInputProps) => {
   const handleCategoryDelete = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
     handleCategoryChange({ target: { value: null } });
   };
   const renderCategory = category => <Chip label={category} onDelete={handleCategoryDelete} />;
+  const categoryFilterByType = categories.filter(({ type }) => type === transactionType);
 
   return (
     <InputBoxIcon>
@@ -218,13 +238,11 @@ const CategoryInput = ({ categories, category, handleCategoryChange }: CategoryI
           renderValue: () => renderCategory(category),
         }}
       >
-        {categories
-          .filter(({ type }) => type === 'receita')
-          .map(({ category }, i) => (
-            <MenuItem key={i} value={category}>
-              {category}
-            </MenuItem>
-          ))}
+        {categoryFilterByType.map(({ category }, i) => (
+          <MenuItem key={i} value={category}>
+            {category}
+          </MenuItem>
+        ))}
       </TextField>
     </InputBoxIcon>
   );

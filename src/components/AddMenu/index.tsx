@@ -7,8 +7,14 @@ import { PaperContainer, ItemText } from './styles';
 
 const AddButtonMenu = () => {
   const [open, setOpen] = useState(false);
+  const [transactionType, setTransactionType] = useState('');
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = type => {
+    console.log(type);
+    setTransactionType(type);
+    setOpen(true);
+  };
+
   const handleClose = () => setOpen(false);
 
   return (
@@ -16,19 +22,19 @@ const AddButtonMenu = () => {
       <PaperContainer>
         <MenuList>
           <MenuLabel
-            onClick={handleOpen}
+            onClick={() => handleOpen('receita')}
             icon={<TrendingUpOutlined sx={{ color: '#22c58b' }} />}
             text='Receita'
           />
           <Divider />
           <MenuLabel
-            onClick={handleOpen}
+            onClick={() => handleOpen('despesa')}
             icon={<TrendingDownOutlined sx={{ color: '#eb3d3d' }} />}
             text='Despesa'
           />
         </MenuList>
       </PaperContainer>
-      <AddTransactionModal onClose={handleClose} open={open} type='despesa' />
+      <AddTransactionModal onClose={handleClose} open={open} type={transactionType} />
     </>
   );
 };

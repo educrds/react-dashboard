@@ -8,23 +8,28 @@ import AddTransactionForm from '../AddTransactionForm';
 interface AddTransactionModalProps {
   open: boolean;
   onClose: () => {};
+  type: string;
 }
 
-const AddTransactionModal = ({ open, onClose }: AddTransactionModalProps) => (
-  <ModalContainer open={open}>
-    <InnerContainer maxWidth='xs'>
-      <Bar position='static'>
-        <Toolbar>
-          <BarTitle variant='h5'>Nova receita</BarTitle>
-          <IconButton onClick={onClose}>
-            <CloseRounded />
-          </IconButton>
-        </Toolbar>
-      </Bar>
-      <BorderDivider />
-      <AddTransactionForm />
-    </InnerContainer>
-  </ModalContainer>
-);
+const AddTransactionModal = ({ open, onClose, type }: AddTransactionModalProps) => {
+  const transactionType = type === 'receita' ? 'Nova receita' : 'Nova despesa';
+
+  return (
+    <ModalContainer open={open}>
+      <InnerContainer maxWidth='xs'>
+        <Bar position='static'>
+          <Toolbar>
+            <BarTitle variant='h5'>{transactionType}</BarTitle>
+            <IconButton onClick={onClose}>
+              <CloseRounded />
+            </IconButton>
+          </Toolbar>
+        </Bar>
+        <BorderDivider />
+        <AddTransactionForm transactionType={type} />
+      </InnerContainer>
+    </ModalContainer>
+  );
+};
 
 export default AddTransactionModal;
