@@ -22,13 +22,13 @@ const AddButtonMenu = () => {
       <PaperContainer>
         <MenuList>
           <MenuLabel
-            onClick={() => handleOpen('receita')}
+            onClick={() => handleOpen('revenues')}
             icon={<TrendingUpOutlined sx={{ color: '#22c58b' }} />}
             text='Receita'
           />
           <Divider />
           <MenuLabel
-            onClick={() => handleOpen('despesa')}
+            onClick={() => handleOpen('expenses')}
             icon={<TrendingDownOutlined sx={{ color: '#eb3d3d' }} />}
             text='Despesa'
           />

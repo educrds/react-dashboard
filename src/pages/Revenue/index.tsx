@@ -22,7 +22,7 @@ const Revenue = () => {
           ]}
         />
       </div>
-      <AllTransactions />
+      <AllTransactions type='revenues' />
     </Wrapper>
   );
 };

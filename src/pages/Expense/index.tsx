@@ -22,7 +22,7 @@ const Expenses = () => {
           ]}
         />
       </div>
-      <AllTransactions />
+      <AllTransactions type='expenses' />
     </Wrapper>
   );
 };

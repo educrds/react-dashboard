@@ -12,7 +12,7 @@ interface AddTransactionModalProps {
 }
 
 const AddTransactionModal = ({ open, onClose, type }: AddTransactionModalProps) => {
-  const transactionType = type === 'receita' ? 'Nova receita' : 'Nova despesa';
+  const transactionType = type === 'revenues' ? 'Nova receita' : 'Nova despesa';
 
   return (
     <ModalContainer open={open}>
