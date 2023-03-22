@@ -1,13 +1,13 @@
 @import '../../styles/sass/colors';
 
-.table__header__color {
+.table_header_color {
   background-color: map-get($colors, colorized, primary);
   color: map-get($colors, white, secondary);
   button {
     color: map-get($colors, white, secondary);
   }
 }
-.change__transaction__type {
+.transaction_type {
   display: flex;
   div {
     margin-left: auto;

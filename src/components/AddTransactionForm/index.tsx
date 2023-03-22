@@ -22,10 +22,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import moment from 'moment';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { categories } from '../../charts/doughnutChartConfig';
-import { collection, addDoc } from 'firebase/firestore';
-import { db } from '../../services/firebaseConfig';
-import { MainGrid, InputBoxIcon, ButtonBox } from './styles';
 import { NumericFormat } from 'react-number-format';
+import { MainGrid, InputBoxIcon, ButtonBox, ToggleContainer } from './styles';
+import { insertDocument } from '../../services/transactions';
 
 const CustomInput = function CustomInput(props) {
   const { InputProps } = props;
@@ -70,9 +69,9 @@ const AddTransactionForm = ({ transactionType }: AddTransactionFormProps) => {
     description: '',
     value: '',
     date: '',
+    type: '',
   });
 
-  const collectionName = transactionType === 'receita' ? 'revenues' : 'expenses';
   const uid = 'iVmUSglTCiR0GvPdWNzMzstEb3R2';
 
   const handleValueChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -100,22 +99,10 @@ const AddTransactionForm = ({ transactionType }: AddTransactionFormProps) => {
   const handleDateChange = newDate =>
     setFormData(prevFormData => ({ ...prevFormData, date: newDate }));
 
-  // Alterar de acordo com o tipo de transação
   const handleSubmit = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.preventDefault();
-    const sendData = async () => {
-      try {
-        const docRef = await addDoc(
-          collection(db, `transactions/${uid}/${collectionName}`),
-          formData
-        );
-        console.log('Document written with ID: ', docRef.id);
-      } catch (error) {
-        console.error('Error adding document: ', error);
-      }
-    };
-
-    sendData();
+    setFormData(prevFormData => ({ ...prevFormData, type: transactionType }));
+    insertDocument(uid, formData);
   };
 
   return (
@@ -136,14 +123,14 @@ const AddTransactionForm = ({ transactionType }: AddTransactionFormProps) => {
               }}
             />
           </InputBoxIcon>
-          <Box>
+          <ToggleContainer>
             <FormControlLabel
-              label={transactionType === 'receita' ? 'Recebida' : 'Paga'}
+              label={transactionType === 'revenues' ? 'Recebida' : 'Paga'}
               labelPlacement='end'
               control={<Switch color='primary' />}
               onChange={handleStatusCheck}
             />
-          </Box>
+          </ToggleContainer>
         </Grid>
         <Grid item md={12}>
           <DateInput onDateChange={handleDateChange} />
@@ -161,12 +148,12 @@ const AddTransactionForm = ({ transactionType }: AddTransactionFormProps) => {
             categories={categories}
             category={formData.category}
             handleCategoryChange={handleCategoryChange}
-            transactionType={transactionType}
+            transactionType={transactionType === 'revenues' ? 'receita' : 'despesa'}
           />
         </Grid>
         <Grid item>
           <ButtonBox>
-            <Button variant='contained' type='submit'>
+            <Button variant='contained' type='submit' disableElevation>
               Salvar
             </Button>
           </ButtonBox>

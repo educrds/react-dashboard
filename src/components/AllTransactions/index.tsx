@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams, ptBR } from '@mui/x-data-grid';
-import { CreditCard, PaidOutlined } from '@mui/icons-material';
+import { DeleteOutlineRounded, EditOutlined } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Tab, Tabs, Box, Chip } from '@mui/material';
 import { categoryColors } from '../../charts/doughnutChartConfig';
 import PaymentChip from '../PaymentChip';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../services/firebaseConfig';
+import moment from 'moment';
+import { deleteDocument } from '../../services/transactions';
 import './styles.scss';
 
 const theme = createTheme({
@@ -64,48 +68,35 @@ const columns: GridColDef[] = [
     field: 'situation',
     headerName: 'Situação',
     flex: 1,
-    headerClassName: 'table__header__color',
+    headerClassName: 'table_header_color',
     sortable: false,
     renderCell: (params: GridValueGetterParams) => {
-      const situation = params.row.situation;
-      if (situation === 'Paga' || situation === 'Recebida') {
-        return <PaymentChip label={situation} />;
+      const { status, type } = params.row;
+      if (type === 'expenses') {
+        return <PaymentChip label={status ? 'Paga' : 'Não paga'} />;
       }
-      return <PaymentChip label={situation} />;
-    },
-  },
-  {
-    field: 'payment',
-    headerName: 'Forma de Pagamento',
-    flex: 1,
-    headerClassName: 'table__header__color',
-    sortable: true,
-    renderCell: (params: GridValueGetterParams) => {
-      const paymentMethod = params.row.payment;
-      if (paymentMethod === 'Débito') {
-        return <Chip icon={<PaidOutlined />} label='Débito' variant='outlined' />;
-      }
-      return <Chip icon={<CreditCard />} label='Débito' variant='outlined' />;
+      return <PaymentChip label={status ? 'Recebida' : 'Não recebida'} />;
     },
   },
   {
     field: 'date',
     headerName: 'Data',
     flex: 1,
-    headerClassName: 'table__header__color',
+    headerClassName: 'table_header_color',
+    valueGetter: params => moment.unix(params.value).format('DD/MM/YYYY'),
   },
   {
     field: 'description',
     headerName: 'Descrição',
     flex: 2,
-    headerClassName: 'table__header__color',
+    headerClassName: 'table_header_color',
   },
   {
     field: 'category',
     headerName: 'Categoria',
     type: 'number',
     flex: 1,
-    headerClassName: 'table__header__color',
+    headerClassName: 'table_header_color',
     headerAlign: 'left',
     align: 'left',
     renderCell: (params: GridCellParams) => {
@@ -120,107 +111,100 @@ const columns: GridColDef[] = [
     description: 'This column has a value getter and is not sortable.',
     sortable: true,
     flex: 1,
-    headerClassName: 'table__header__color',
+    headerClassName: 'table_header_color',
+    valueFormatter: ({ value }) =>
+      new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value),
   },
 ];
 
-const rows = [
-  {
-    id: 1,
-    situation: 'Paga',
-    payment: 'Débito',
-    date: '03/03/2023',
-    description: 'Garrafa de água - Shoppe',
-    category: 'Outros',
-    value: 'R$ 89,90',
-  },
-  {
-    id: 2,
-    situation: 'Não paga',
-    payment: 'Crédito',
-    date: '01/03/2023',
-    description: 'Internet',
-    category: 'Internet',
-    value: 'R$ 89,90',
-  },
-  {
-    id: 3,
-    situation: 'Paga',
-    payment: 'Débito',
-    date: '10/03/2023',
-    description: 'Claro Flex',
-    category: 'Internet',
-    value: 'R$ 39,90',
-  },
-  {
-    id: 4,
-    situation: 'Não paga',
-    payment: 'Crédito',
-    date: '13/03/2023',
-    description: 'Macbook Air',
-    category: 'Trabalho',
-    value: 'R$ 289,90',
-  },
-  {
-    id: 5,
-    situation: 'Paga',
-    payment: 'Débito',
-    date: '01/03/2023',
-    description: 'Aluguel',
-    category: 'Aluguel',
-    value: 'R$ 1.500',
-  },
-  {
-    id: 6,
-    situation: 'Recebida',
-    payment: 'PIX',
-    date: '01/03/2023',
-    description: 'Salário',
-    category: 'Receita',
-    value: 'R$ 3.500',
-  },
-  {
-    id: 7,
-    situation: 'Recebida',
-    payment: 'PIX',
-    date: '01/03/2023',
-    description: 'Freelancer',
-    category: 'Receita',
-    value: 'R$ 1.500',
-  },
-];
+// Função para obter todas as transactions (expenses e revenues)
+const getAllTransactions = async (uid: string) => {
+  const querySnapshot = await getDocs(collection(db, `transactions/${uid}/user_transactions`));
+  const transactions = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return transactions;
+};
 
-const AllTransactions = () => {
+const AllTransactions = ({ type }) => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const [tableData, setTableData] = useState(rows);
+  const [allTransactions, setAllTransactions] = useState([]);
+  const [tableData, setTableData] = useState([]);
+  const [selectedRow, setSelectedRow] = useState('');
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) =>
     setSelectedTab(newValue);
 
-  useEffect(() => {
-    const filterRows = row => {
-      if (selectedTab === 1) return row.situation !== 'Receita';
-      if (selectedTab === 2) return row.situation === 'Receita';
+  const fetchData = async () => {
+    const transactions = await getAllTransactions('iVmUSglTCiR0GvPdWNzMzstEb3R2');
+    setAllTransactions(transactions);
+  };
+
+  const filterRows = () => {
+    const filterByType = row => {
+      if (selectedTab === 1) {
+        return row.type === 'expenses';
+      }
+      if (selectedTab === 2) {
+        return row.type === 'revenues';
+      }
+      if (type === 'expenses') {
+        return row.type === 'expenses';
+      }
+      if (type === 'revenues') {
+        return row.type === 'revenues';
+      }
       return true;
     };
-    setTableData(rows.filter(filterRows));
-  }, [selectedTab, rows]);
+
+    const filteredTransactions = allTransactions.filter(filterByType);
+    setTableData(filteredTransactions);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    filterRows();
+  }, [selectedTab, allTransactions, type]);
 
   return (
     <ThemeProvider theme={theme}>
-      <div className='change__transaction__type'>
+      <div className='transaction_type'>
         <h2>Transações</h2>
-        <Box>
-          <Tabs value={selectedTab} onChange={handleTabChange}>
-            <Tab label='Tudo' />
-            <Tab label='Despesas' />
-            <Tab label='Receitas' />
-          </Tabs>
-        </Box>
+        {type !== 'revenues' && type !== 'expenses' && (
+          <Box sx={{ display: 'flex', textAlign: 'center', alignItems: 'center' }}>
+            {selectedRow && (
+              <DeleteOutlineRounded fontSize='small' onClick={() => handleDelete(selectedRow.id)} />
+            )}
+            <Tabs value={selectedTab} onChange={handleTabChange}>
+              <Tab label='Tudo' />
+              <Tab label='Despesas' />
+              <Tab label='Receitas' />
+            </Tabs>
+          </Box>
+        )}
       </div>
-      <DataGrid rows={tableData} columns={columns} autoHeight/>
+      <TransactionsTable tableData={tableData} columns={columns} setSelectedRow={setSelectedRow} />
     </ThemeProvider>
   );
 };
+
+interface TransactionsTableProps {
+  tableData: GridRowData[];
+  columns: GridColDef[];
+  setSelectedRow: (rowId: number) => void;
+}
+
+function TransactionsTable({ tableData, columns, setSelectedRow }: TransactionsTableProps) {
+  const handleRowSelectionChange = selectedRows => setSelectedRow(selectedRows[0]);
+  return (
+    <DataGrid
+      rows={tableData}
+      columns={columns}
+      autoHeight
+      onRowSelectionModelChange={handleRowSelectionChange}
+    />
+  );
+}
 
 export default AllTransactions;
