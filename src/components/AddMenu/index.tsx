@@ -10,7 +10,6 @@ const AddButtonMenu = () => {
   const [transactionType, setTransactionType] = useState('');
 
   const handleOpen = type => {
-    console.log(type);
     setTransactionType(type);
     setOpen(true);
   };

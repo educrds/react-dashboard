@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams, ptBR } from '@mui/x-data-grid';
 import { DeleteOutlineRounded, EditOutlined } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Tab, Tabs, Box, Chip } from '@mui/material';
+import { Tab, Tabs, Box, Chip, Divider, IconButton } from '@mui/material';
 import { categoryColors } from '../../charts/doughnutChartConfig';
 import PaymentChip from '../PaymentChip';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../services/firebaseConfig';
 import moment from 'moment';
-import { deleteDocument } from '../../services/transactions';
+import { deleteDocumentbyId, getTransactions } from '../../services/transactions';
 import './styles.scss';
 
 const theme = createTheme({
@@ -48,6 +46,9 @@ const theme = createTheme({
         },
         indicator: {
           display: 'none',
+        },
+        scroller: {
+          height: '100%',
         },
       },
     },
@@ -117,14 +118,11 @@ const columns: GridColDef[] = [
   },
 ];
 
-// Função para obter todas as transactions (expenses e revenues)
-const getAllTransactions = async (uid: string) => {
-  const querySnapshot = await getDocs(collection(db, `transactions/${uid}/user_transactions`));
-  const transactions = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  return transactions;
-};
+interface PropsAllTransactions {
+  type: string;
+}
 
-const AllTransactions = ({ type }) => {
+const AllTransactions = ({ type }: PropsAllTransactions) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [allTransactions, setAllTransactions] = useState([]);
   const [tableData, setTableData] = useState([]);
@@ -133,59 +131,91 @@ const AllTransactions = ({ type }) => {
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) =>
     setSelectedTab(newValue);
 
-  const fetchData = async () => {
-    const transactions = await getAllTransactions('iVmUSglTCiR0GvPdWNzMzstEb3R2');
+  const loadTransactions = async () => {
+    const transactions = await getTransactions('iVmUSglTCiR0GvPdWNzMzstEb3R2', type);
     setAllTransactions(transactions);
   };
 
-  const filterRows = () => {
-    const filterByType = row => {
-      if (selectedTab === 1) {
-        return row.type === 'expenses';
-      }
-      if (selectedTab === 2) {
-        return row.type === 'revenues';
-      }
-      if (type === 'expenses') {
-        return row.type === 'expenses';
-      }
-      if (type === 'revenues') {
-        return row.type === 'revenues';
-      }
-      return true;
-    };
+  const filterRowsByType = (row: any) => {
+    if (selectedTab === 1) {
+      return row.type === 'expenses';
+    }
+    if (selectedTab === 2) {
+      return row.type === 'revenues';
+    }
+    return true;
+  };
 
-    const filteredTransactions = allTransactions.filter(filterByType);
+  const filterRows = () => {
+    const filteredTransactions = allTransactions.filter(filterRowsByType);
     setTableData(filteredTransactions);
   };
 
   useEffect(() => {
-    fetchData();
+    loadTransactions();
   }, []);
 
   useEffect(() => {
     filterRows();
   }, [selectedTab, allTransactions, type]);
 
+  const handleEdit = () => {
+    console.log(selectedRow);
+  };
+
+  const handleDelete = () => deleteDocumentbyId('iVmUSglTCiR0GvPdWNzMzstEb3R2', selectedRow);
+
   return (
     <ThemeProvider theme={theme}>
       <div className='transaction_type'>
         <h2>Transações</h2>
-        {type !== 'revenues' && type !== 'expenses' && (
-          <Box sx={{ display: 'flex', textAlign: 'center', alignItems: 'center' }}>
-            {selectedRow && (
-              <DeleteOutlineRounded fontSize='small' onClick={() => handleDelete(selectedRow.id)} />
-            )}
+        <Box sx={{ display: 'flex', textAlign: 'center', alignItems: 'center' }}>
+          {selectedRow && <EditMenu handleDelete={handleDelete} handleEdit={handleEdit} />}
+          {!type && (
             <Tabs value={selectedTab} onChange={handleTabChange}>
               <Tab label='Tudo' />
               <Tab label='Despesas' />
               <Tab label='Receitas' />
             </Tabs>
-          </Box>
-        )}
+          )}
+        </Box>
       </div>
       <TransactionsTable tableData={tableData} columns={columns} setSelectedRow={setSelectedRow} />
     </ThemeProvider>
+  );
+};
+
+const EditMenu = ({ handleDelete, handleEdit }) => {
+  return (
+    <div>
+      <Box
+        sx={{
+          display: 'flex',
+          height: 50,
+          marginRight: '3vw',
+          alignItems: 'center',
+          width: 'fit-content',
+          border: theme => `1px solid ${theme.palette.divider}`,
+          borderRadius: '.5rem',
+          bgcolor: 'background.paper',
+          color: 'text.secondary',
+          '& svg': {
+            m: 1.5,
+          },
+          '& hr': {
+            mx: 0.5,
+          },
+        }}
+      >
+        <IconButton onClick={handleDelete} size='small'>
+          <DeleteOutlineRounded fontSize='small' />
+        </IconButton>
+        <Divider orientation='vertical' />
+        <IconButton onClick={handleEdit} size='small'>
+          <EditOutlined fontSize='small' />
+        </IconButton>
+      </Box>
+    </div>
   );
 };
 

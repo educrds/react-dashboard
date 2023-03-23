@@ -1,5 +1,18 @@
-import { collection, doc, addDoc, deleteDoc } from 'firebase/firestore';
+import { collection, doc, addDoc, deleteDoc, getDocs, where, query } from 'firebase/firestore';
 import { db } from './firebaseConfig';
+
+// Função para obter todas as transactions (expenses e revenues)
+const getTransactions = async (uid: string, type?: string) => {
+  let queryRef = collection(db, `transactions/${uid}/user_transactions`);
+
+  if (type) {
+    queryRef = query(queryRef, where('type', '==', type));
+  }
+
+  const querySnapshot = await getDocs(queryRef);
+  const transactions = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return transactions;
+};
 
 const insertDocument = async (uid: string, data: string) => {
   try {
@@ -10,7 +23,7 @@ const insertDocument = async (uid: string, data: string) => {
   }
 };
 
-const deleteDocument = async (uid: string, docId: string) => {
+const deleteDocumentbyId = async (uid: string, docId: string) => {
   console.log(docId);
   try {
     const collectionRef = collection(db, `transactions/${uid}/user_transactions`);
@@ -22,4 +35,4 @@ const deleteDocument = async (uid: string, docId: string) => {
   }
 };
 
-export { insertDocument, deleteDocument };
+export { insertDocument, deleteDocumentbyId, getTransactions };
