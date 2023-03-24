@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom';
 import React, { ElementType } from 'react';
 import DashboardItem from '../DashboardItem';
 import './styles.scss';
+import { useSelector } from 'react-redux';
+import { getFilteredTransactions } from '../../services/transactions';
 
 interface DataItem {
   title: string;
@@ -17,25 +19,40 @@ interface DataItem {
   to?: string;
 }
 
-const data: DataItem[] = [
-  {
-    title: 'Receitas',
-    value: 'R$5.000',
-    color: 'icon__green',
-    icon: <TrendingUpRounded />,
-    to: '/receitas',
-  },
-  { title: 'Balanço', value: 'R$2.000', color: 'icon__grey', icon: <AccountBalanceOutlined /> },
-  {
-    title: 'Despesas',
-    value: 'R$3.000',
-    color: 'icon__red',
-    icon: <TrendingDownRounded />,
-    to: '/despesas',
-  },
-];
-
 const DashboardOverview = () => {
+  const sumTransactionsByType = (type: string) =>
+    useSelector(getFilteredTransactions(type))
+      .filter(transaction => transaction.type === type)
+      .reduce((total, transaction) => total + transaction.value, 0);
+
+  const revenuesSum = sumTransactionsByType('revenues');
+  const expensesSum = sumTransactionsByType('expenses');
+
+  const data: DataItem[] = [
+    {
+      title: 'Receitas',
+      value: `R$${revenuesSum.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
+      color: 'icon__green',
+      icon: <TrendingUpRounded />,
+      to: '/receitas',
+    },
+    {
+      title: 'Balanço',
+      value: `R$${(revenuesSum - expensesSum).toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+      })}`,
+      color: 'icon__grey',
+      icon: <AccountBalanceOutlined />,
+    },
+    {
+      title: 'Despesas',
+      value: `R$${expensesSum.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
+      color: 'icon__red',
+      icon: <TrendingDownRounded />,
+      to: '/despesas',
+    },
+  ];
+
   return (
     <DashboardItem>
       {data.map((square, i) => (
