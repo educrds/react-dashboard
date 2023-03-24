@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FormControlLabel,
   TextField,
@@ -23,8 +23,9 @@ import moment from 'moment';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { categories } from '../../charts/doughnutChartConfig';
 import { NumericFormat } from 'react-number-format';
+import { insertDocument, updateDocumentById } from '../../services/transactions';
+import { useDispatch } from 'react-redux';
 import { MainGrid, InputBoxIcon, ButtonBox, ToggleContainer } from './styles';
-import { insertDocument } from '../../services/transactions';
 
 const CustomInput = function CustomInput(props) {
   const { InputProps } = props;
@@ -60,21 +61,35 @@ function NumericFormatCustom(props) {
 
 interface AddTransactionFormProps {
   transactionType: string;
+  transactionToEdit?: Transaction;
+  onClose: boolean;
 }
 
-const AddTransactionForm = ({ transactionType }: AddTransactionFormProps) => {
-  const [formData, setFormData] = useState({
+const AddTransactionForm = ({
+  transactionType,
+  transactionToEdit,
+  onClose,
+}: AddTransactionFormProps) => {
+  const initialFormData = {
     status: false,
     category: '',
     description: '',
     value: '',
     date: '',
     type: '',
-  });
+  };
+  const [uid] = useState('iVmUSglTCiR0GvPdWNzMzstEb3R2');
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState(initialFormData);
 
-  const uid = 'iVmUSglTCiR0GvPdWNzMzstEb3R2';
+  useEffect(() => {
+    if (transactionToEdit) {
+      setFormData(transactionToEdit);
+    }
+  }, [transactionToEdit]);
 
   const handleValueChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    console.log(event.target.value);
     setFormData(prevFormData => ({
       ...prevFormData,
       value: event.target.value,
@@ -101,8 +116,12 @@ const AddTransactionForm = ({ transactionType }: AddTransactionFormProps) => {
 
   const handleSubmit = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.preventDefault();
-    setFormData(prevFormData => ({ ...prevFormData, type: transactionType }));
-    insertDocument(uid, formData);
+    const updatedFormData = { ...formData, type: transactionType };
+    transactionToEdit
+      ? dispatch(updateDocumentById(uid, transactionToEdit.id, formData))
+      : dispatch(insertDocument(uid, updatedFormData));
+    setFormData(initialFormData);
+    onClose();
   };
 
   return (
@@ -148,7 +167,7 @@ const AddTransactionForm = ({ transactionType }: AddTransactionFormProps) => {
             categories={categories}
             category={formData.category}
             handleCategoryChange={handleCategoryChange}
-            transactionType={transactionType === 'revenues' ? 'receita' : 'despesa'}
+            transactionType={transactionType === 'revenues' ? 'revenue' : 'expense'}
           />
         </Grid>
         <Grid item>
@@ -190,48 +209,61 @@ const InputWithIcon = ({ icon, value, placeholder, onChange, adornment }: InputW
   );
 };
 
+interface Category {
+  category: string;
+  type: string;
+}
+
 interface CategoryInputProps {
-  categories: [];
+  categories: Category[];
   category: string;
   handleCategoryChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
   transactionType: string;
 }
 
-const CategoryInput = ({
+const CategoryInput: React.FC<CategoryInputProps> = ({
   categories,
   category,
   handleCategoryChange,
   transactionType,
-}: CategoryInputProps) => {
+}) => {
   const handleCategoryDelete = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
     handleCategoryChange({ target: { value: null } });
   };
-  const renderCategory = category => <Chip label={category} onDelete={handleCategoryDelete} />;
-  const categoryFilterByType = categories.filter(({ type }) => type === transactionType);
+
+  const renderCategoryList = () => {
+    const categoryFilterByType = categories.filter(({ type }) => type === transactionType);
+    return categoryFilterByType.map(({ category }, i) => (
+      <MenuItem key={i} value={category}>
+        {category}
+      </MenuItem>
+    ));
+  };
+
+  const handleCategorySelection = (event: React.ChangeEvent<{ value: unknown }>) => {
+    handleCategoryChange(event);
+  };
+
+  const renderCategory = () => <Chip label={category} onDelete={handleCategoryDelete} />;
 
   return (
-    <InputBoxIcon>
-      <LabelRounded />
-      <TextField
-        id='my-textfield'
-        label='Categoria'
-        variant='standard'
-        fullWidth
-        select
-        value={category}
-        onChange={handleCategoryChange}
-        SelectProps={{
-          renderValue: () => renderCategory(category),
-        }}
-      >
-        {categoryFilterByType.map(({ category }, i) => (
-          <MenuItem key={i} value={category}>
-            {category}
-          </MenuItem>
-        ))}
-      </TextField>
-    </InputBoxIcon>
+    <TextField
+      id='my-textfield'
+      variant='standard'
+      fullWidth
+      select
+      value={category}
+      onChange={handleCategorySelection}
+      SelectProps={{
+        renderValue: renderCategory,
+      }}
+      InputProps={{
+        startAdornment: <LabelRounded />,
+      }}
+    >
+      {renderCategoryList()}
+    </TextField>
   );
 };
 

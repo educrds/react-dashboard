@@ -1,17 +1,22 @@
 import React from 'react';
 import { IconButton, Toolbar, Typography } from '@mui/material';
 import { CloseRounded } from '@mui/icons-material';
-import { ModalContainer, InnerContainer, BorderDivider, Bar, BarTitle } from './styles';
-
 import AddTransactionForm from '../AddTransactionForm';
+import { ModalContainer, InnerContainer, BorderDivider, Bar } from './styles';
 
 interface AddTransactionModalProps {
   open: boolean;
   onClose: () => {};
   type: string;
+  transactionToEdit?: string;
 }
 
-const AddTransactionModal = ({ open, onClose, type }: AddTransactionModalProps) => {
+const AddTransactionModal = ({
+  open,
+  onClose,
+  type,
+  transactionToEdit,
+}: AddTransactionModalProps) => {
   const transactionType = type === 'revenues' ? 'Nova receita' : 'Nova despesa';
 
   return (
@@ -26,7 +31,11 @@ const AddTransactionModal = ({ open, onClose, type }: AddTransactionModalProps) 
           </Toolbar>
         </Bar>
         <BorderDivider />
-        <AddTransactionForm transactionType={type} />
+        <AddTransactionForm
+          transactionType={type}
+          transactionToEdit={transactionToEdit}
+          onClose={onClose}
+        />
       </InnerContainer>
     </ModalContainer>
   );

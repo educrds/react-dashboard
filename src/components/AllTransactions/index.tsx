@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams, ptBR } from '@mui/x-data-grid';
 import { DeleteOutlineRounded, EditOutlined } from '@mui/icons-material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Tab, Tabs, Box, Chip, Divider, IconButton } from '@mui/material';
+import { Tab, Tabs, Box, Chip, Divider, IconButton, createTheme, ThemeProvider } from '@mui/material';
 import { categoryColors } from '../../charts/doughnutChartConfig';
 import PaymentChip from '../PaymentChip';
 import moment from 'moment';
-import { deleteDocumentbyId, getTransactions } from '../../services/transactions';
+import { deleteDocumentById, getTransactions } from '../../services/transactions';
+import { useSelector, useDispatch } from 'react-redux';
+import AddTransactionModal from '../AddTransactionModal';
 import './styles.scss';
 
 const theme = createTheme({
@@ -119,22 +120,20 @@ const columns: GridColDef[] = [
 ];
 
 interface PropsAllTransactions {
-  type: string;
+  type?: string;
 }
 
 const AllTransactions = ({ type }: PropsAllTransactions) => {
+  const [uid] = useState('iVmUSglTCiR0GvPdWNzMzstEb3R2');
   const [selectedTab, setSelectedTab] = useState(0);
-  const [allTransactions, setAllTransactions] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [selectedRow, setSelectedRow] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) =>
-    setSelectedTab(newValue);
+  const dispatch = useDispatch();
+  const allTransactions = useSelector((state: any) => state.transactions.transactions);
 
-  const loadTransactions = async () => {
-    const transactions = await getTransactions('iVmUSglTCiR0GvPdWNzMzstEb3R2', type);
-    setAllTransactions(transactions);
-  };
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => setSelectedTab(newValue);
 
   const filterRowsByType = (row: any) => {
     if (selectedTab === 1) {
@@ -152,18 +151,17 @@ const AllTransactions = ({ type }: PropsAllTransactions) => {
   };
 
   useEffect(() => {
-    loadTransactions();
-  }, []);
-
+    dispatch(getTransactions(uid));
+  }, [dispatch, uid]);
+  
   useEffect(() => {
     filterRows();
-  }, [selectedTab, allTransactions, type]);
+  }, [allTransactions, selectedTab, type]);
+  
 
-  const handleEdit = () => {
-    console.log(selectedRow);
-  };
-
-  const handleDelete = () => deleteDocumentbyId('iVmUSglTCiR0GvPdWNzMzstEb3R2', selectedRow);
+  const handleEdit = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+  const handleDelete = () => dispatch(deleteDocumentById(uid, selectedRow));
 
   return (
     <ThemeProvider theme={theme}>
@@ -180,7 +178,17 @@ const AllTransactions = ({ type }: PropsAllTransactions) => {
           )}
         </Box>
       </div>
-      <TransactionsTable tableData={tableData} columns={columns} setSelectedRow={setSelectedRow} />
+      <TransactionsTable
+        key={selectedTab}
+        tableData={tableData}
+        columns={columns}
+        setSelectedRow={setSelectedRow}
+      />
+      <AddTransactionModal
+        onClose={handleCloseModal}
+        open={showModal}
+        transactionToEdit={selectedRow}
+      />
     </ThemeProvider>
   );
 };
@@ -225,8 +233,11 @@ interface TransactionsTableProps {
   setSelectedRow: (rowId: number) => void;
 }
 
-function TransactionsTable({ tableData, columns, setSelectedRow }: TransactionsTableProps) {
-  const handleRowSelectionChange = selectedRows => setSelectedRow(selectedRows[0]);
+const TransactionsTable = ({ tableData, columns, setSelectedRow }: TransactionsTableProps) => {
+  const handleRowSelectionChange = selectedRows => {
+    const selectedRow = tableData.find(row => row.id === selectedRows[0]);
+    setSelectedRow(selectedRow);
+  };
   return (
     <DataGrid
       rows={tableData}
@@ -235,6 +246,6 @@ function TransactionsTable({ tableData, columns, setSelectedRow }: TransactionsT
       onRowSelectionModelChange={handleRowSelectionChange}
     />
   );
-}
+};
 
 export default AllTransactions;
