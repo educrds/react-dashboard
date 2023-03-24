@@ -26,29 +26,26 @@ const options = {
 
 interface Category {
   category: string;
-  type: 'receita' | 'despesa';
+  type: 'revenue' | 'expense';
   color: string;
 }
 
 export const categories: Category[] = [
-  { category: 'Serviços', type: 'despesa', color: '#8ecae6' },
-  { category: 'Aluguel', type: 'despesa', color: '#219ebc' },
-  { category: 'Casa', type: 'despesa', color: '#023047' },
-  { category: 'Lazer', type: 'despesa', color: '#ffb703' },
-  { category: 'Internet', type: 'despesa', color: '#fb8500' },
-  { category: 'Mercado', type: 'despesa', color: '#d62828' },
-  { category: 'Mensalidades', type: 'despesa', color: '#60d394' },
-  { category: 'Transporte', type: 'despesa', color: '#e76f51' },
-  { category: 'Salário', type: 'receita', color: '#60d394' },
-  { category: 'Outras receitas', type: 'receita', color: '#90be6d' },
-  { category: 'Outras despesas', type: 'despesa', color: '#bfbfbf' },
+  { category: 'Serviços', type: 'expense', color: '#8ecae6' },
+  { category: 'Aluguel', type: 'expense', color: '#219ebc' },
+  { category: 'Casa', type: 'expense', color: '#023047' },
+  { category: 'Lazer', type: 'expense', color: '#ffb703' },
+  { category: 'Internet', type: 'expense', color: '#fb8500' },
+  { category: 'Mercado', type: 'expense', color: '#d62828' },
+  { category: 'Mensalidades', type: 'expense', color: '#60d394' },
+  { category: 'Transporte', type: 'expense', color: '#e76f51' },
+  { category: 'Salário', type: 'revenue', color: '#60d394' },
+  { category: 'Outras receitas', type: 'revenue', color: '#90be6d' },
+  { category: 'Outras despesas', type: 'expense', color: '#bfbfbf' },
 ];
 
-export const categoryColors = categories.reduce((colors, category) => {
-  return {
-    ...colors,
-    [category.category]: category.color,
-  };
-}, {});
+export const categoryColors = Object.fromEntries(
+  categories.map(({ category, color }) => [category, color])
+);
 
 export default options;

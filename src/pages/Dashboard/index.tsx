@@ -1,54 +1,72 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import DashboardOverview from '../../components/DashboardOverview';
 import BarChart from '../../components/ChartBar';
 import AllTransactions from '../../components/AllTransactions';
 import ExpenseDoughnutChart from '../../components/DoughnutChart/Expenses';
 import RevenueDoughnutChart from '../../components/DoughnutChart/Revenue';
 import Wrapper from '../../components/Wrapper';
+import { useSelector } from 'react-redux';
+import moment from 'moment';
 import './styles.scss';
 
-const data = [
-  {
-    label: 'Receitas',
-    data: [2000, 3000, 2500, 4500, 3500, 4000, 1000, 1500, 2000, 2500, 1800, 3000],
-    backgroundColor: '#60d394',
-  },
-  {
-    label: 'Despesas',
-    data: [1000, 1500, 2000, 2500, 1800, 3000, 1000, 1750, 1000, 1500, 2800, 3000],
-    backgroundColor: '#ee6055',
-  },
-];
-
 const Dashboard = () => {
+  const transactions = useSelector((state: any) => state.transactions.transactions);
+  const revenuesData = Array(12).fill(0);
+  const expensesData = Array(12).fill(0);
+
+  transactions.forEach((transaction: any) => {
+    const month = moment.unix(transaction.date).month();
+    if (transaction.type === 'revenues') {
+      revenuesData[month] += transaction.value;
+    } else if (transaction.type === 'expenses') {
+      expensesData[month] += transaction.value;
+    }
+  });
+  
+
+  const data = [
+    { label: 'Receitas', data: revenuesData, backgroundColor: '#60d394' },
+    { label: 'Despesas', data: expensesData, backgroundColor: '#ee6055' },
+  ];
+
+  console.log(data);
+
   return (
     <Wrapper>
       <MenuBar />
       <DashboardOverview />
-      <Charts />
+      <Charts data={data} />
       <AllTransactions />
     </Wrapper>
   );
 };
 
-const Charts = () => {
+const Charts = ({ data }: { data: any }) => {
   return (
     <>
-      <div>
-        <h3>Receitas | Despesas</h3>
-        <BarChart title='Receitas | Despesas' datasets={data} />
-      </div>
+      <Chart
+        title='Receitas | Despesas'
+        chart={<BarChart title='Receitas | Despesas' datasets={data} />}
+      />
       <div className='doughnut__charts__container'>
-        <div>
-          <h3>Despesas por categoria</h3>
-          <ExpenseDoughnutChart />
-        </div>
-        <div>
-          <h3>Receitas por categoria</h3>
-          <RevenueDoughnutChart />
-        </div>
+        <Chart title='Despesas por categoria' chart={<ExpenseDoughnutChart />} />
+        <Chart title='Receitas por categoria' chart={<RevenueDoughnutChart />} />
       </div>
     </>
+  );
+};
+
+interface ChartProps {
+  title: string;
+  chart: React.ReactNode;
+}
+
+const Chart = ({ title, chart }: ChartProps) => {
+  return (
+    <div>
+      <h3>{title}</h3>
+      {chart}
+    </div>
   );
 };
 

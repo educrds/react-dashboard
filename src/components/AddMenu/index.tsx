@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { MenuList, MenuItem, ListItemIcon } from '@mui/material';
+import { MenuList, MenuItem, ListItemIcon, Divider } from '@mui/material';
 import { TrendingDownOutlined, TrendingUpOutlined } from '@mui/icons-material';
-import { Divider } from '@mui/material';
 import AddTransactionModal from '../AddTransactionModal';
 import { PaperContainer, ItemText } from './styles';
 
@@ -9,8 +8,8 @@ const AddButtonMenu = () => {
   const [open, setOpen] = useState(false);
   const [transactionType, setTransactionType] = useState('');
 
-  const handleOpen = type => {
-    setTransactionType(type);
+  const handleOpen = event => {
+    setTransactionType(event.currentTarget.getAttribute('data-type'));
     setOpen(true);
   };
 
@@ -21,15 +20,17 @@ const AddButtonMenu = () => {
       <PaperContainer>
         <MenuList>
           <MenuLabel
-            onClick={() => handleOpen('revenues')}
+            onClick={handleOpen}
             icon={<TrendingUpOutlined sx={{ color: '#22c58b' }} />}
             text='Receita'
+            data-type='revenues'
           />
           <Divider />
           <MenuLabel
-            onClick={() => handleOpen('expenses')}
+            onClick={handleOpen}
             icon={<TrendingDownOutlined sx={{ color: '#eb3d3d' }} />}
             text='Despesa'
+            data-type='expenses'
           />
         </MenuList>
       </PaperContainer>
@@ -44,9 +45,9 @@ interface MenuLabelProps {
   text: string;
 }
 
-const MenuLabel = ({ onClick, icon, text }: MenuLabelProps) => {
+const MenuLabel = ({ onClick, icon, text, ...props }: MenuLabelProps) => {
   return (
-    <MenuItem onClick={onClick}>
+    <MenuItem onClick={onClick} {...props}>
       <ListItemIcon>{icon}</ListItemIcon>
       <ItemText>{text}</ItemText>
     </MenuItem>
