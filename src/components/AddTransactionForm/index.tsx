@@ -111,8 +111,10 @@ const AddTransactionForm = ({
       description: event.target.value,
     }));
 
-  const handleDateChange = newDate =>
+  const handleDateChange = newDate => {
+    console.log(newDate);
     setFormData(prevFormData => ({ ...prevFormData, date: newDate }));
+  };
 
   const handleSubmit = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.preventDefault();
@@ -275,7 +277,7 @@ const DateInput = ({ onDateChange }: DateInputProps) => {
   const [date, setDate] = useState<number>();
   const [selectedChipIndex, setSelectedChipIndex] = useState<number>(-1);
 
-  const formatDate = (date: number) => moment(date).unix();
+  const formatDate = (date: moment.Moment) => date.unix();
 
   const setDateFromChipIndex = (index: number) => {
     const today = moment();
