@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import DashboardOverview from '../../components/DashboardOverview';
 import BarChart from '../../components/ChartBar';
 import AllTransactions from '../../components/AllTransactions';
-import ExpenseDoughnutChart from '../../components/DoughnutChart/Expenses';
-import RevenueDoughnutChart from '../../components/DoughnutChart/Revenue';
+import { ExpenseDoughnutChart } from '../Expense';
+import { RevenueDoughnutChart } from '../Revenue';
 import Wrapper from '../../components/Wrapper';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
@@ -22,14 +22,11 @@ const Dashboard = () => {
       expensesData[month] += transaction.value;
     }
   });
-  
 
   const data = [
     { label: 'Receitas', data: revenuesData, backgroundColor: '#60d394' },
     { label: 'Despesas', data: expensesData, backgroundColor: '#ee6055' },
   ];
-
-  console.log(data);
 
   return (
     <Wrapper>

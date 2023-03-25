@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes, Outlet } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
-import Revenue from './pages/Revenue';
+import Revenues from './pages/Revenue';
 import Expenses from './pages/Expense';
 import Transactions from './pages/Transactions';
 import Navbar from './components/Navbar';
@@ -30,7 +30,7 @@ const App: React.FC = () => {
                 }
               >
                 <Route path='/dashboard' element={<Dashboard />} />
-                <Route path='/receitas' element={<Revenue />} />
+                <Route path='/receitas' element={<Revenues />} />
                 <Route path='/despesas' element={<Expenses />} />
                 <Route path='/transacoes' element={<Transactions />} />
               </Route>

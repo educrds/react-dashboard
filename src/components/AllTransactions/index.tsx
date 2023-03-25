@@ -151,7 +151,7 @@ const AllTransactions = ({ type }: PropsAllTransactions) => {
   };
 
   useEffect(() => {
-    dispatch(getTransactions(uid));
+    dispatch(getTransactions(uid, type));
   }, [dispatch, uid]);
   
   useEffect(() => {
