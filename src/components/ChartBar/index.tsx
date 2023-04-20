@@ -13,7 +13,7 @@ type BarChartProps = {
   }[];
 };
 
-const BarChart = ({ title, datasets }: BarChartProps) => {
+const ChartBar = ({ title, datasets }: BarChartProps) => {
   const data = {
     labels,
     datasets,
@@ -31,4 +31,4 @@ const BarChart = ({ title, datasets }: BarChartProps) => {
   );
 };
 
-export default BarChart;
+export default ChartBar;

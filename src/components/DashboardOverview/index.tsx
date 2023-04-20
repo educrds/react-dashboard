@@ -7,9 +7,8 @@ import {
 import { Link } from 'react-router-dom';
 import React, { ElementType } from 'react';
 import DashboardItem from '../DashboardItem';
-import './styles.scss';
 import { useSelector } from 'react-redux';
-import { getFilteredTransactions } from '../../services/transactions';
+import './styles.scss';
 
 interface DataItem {
   title: string;
@@ -20,8 +19,11 @@ interface DataItem {
 }
 
 const DashboardOverview = () => {
+  const getFilteredTransactionsByType = (type: string) => (state: any) =>
+    state.transactions.transactionsByMonth.filter((transaction: any) => transaction.type === type);
+
   const sumTransactionsByType = (type: string) =>
-    useSelector(getFilteredTransactions(type))
+    useSelector(getFilteredTransactionsByType(type))
       .filter(transaction => transaction.type === type)
       .reduce((total, transaction) => total + transaction.value, 0);
 

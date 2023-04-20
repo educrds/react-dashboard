@@ -1,21 +1,24 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import AuthButton from '../../../components/AuthButton';
 import Brand from '../../../components/Brand';
 import GoogleAuthButton from '../../../components/GoogleAuthButton';
 import PasswordInput from '../../../components/Inputs/PasswordInput';
-import '../styles.scss';
 import illustration from '../../../assets/imgs/illustration.png';
 import Input from '../../../components/Inputs/Input';
 import { Link } from 'react-router-dom';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../../services/firebaseConfig';
+import { setUserId } from '../../../services/auth/actions';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { MdOutlineMarkEmailRead } from 'react-icons/md';
-import { AuthenticateContext } from '../../../contexts/AuthenticateContext';
+import '../styles.scss';
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { setUser } = useContext(AuthenticateContext);
   const [sendEmailPasswordReset, setSendEmailPasswordReset] = useState(false);
 
   // Responsável por logar uma conta de usuário com email e senha através da função signInWithEmailAndPassword do Firebase.
@@ -23,8 +26,9 @@ const Login = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      console.log(user);
-      setUser(user);
+      localStorage.setItem('@Auth:uid', user.uid);
+      dispatch(setUserId(user.uid));
+      navigate('/dashboard');
     } catch (error) {
       console.log(error);
     }

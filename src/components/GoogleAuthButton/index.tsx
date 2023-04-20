@@ -1,9 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../../services/firebaseConfig';
-import { AuthenticateContext } from '../../contexts/AuthenticateContext';
-import { Navigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setUserId } from '../../services/auth/actions';
+import { useNavigate } from 'react-router-dom';
 import './styles.scss';
 
 type Props = {
@@ -11,7 +12,8 @@ type Props = {
 };
 
 const GoogleAuthButton = ({ text }: Props) => {
-  const { user, setUser } = useContext(AuthenticateContext);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Responsável por autenticar o usuário através da conta do Google usando a função signInWithPopup do Firebase.
   const handleRegisterWithGoogle = async (
@@ -22,8 +24,10 @@ const GoogleAuthButton = ({ text }: Props) => {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       localStorage.setItem('@Auth:uid', user.uid);
+      dispatch(setUserId(user.uid));
+      navigate('/dashboard');
     } catch (error) {
-      console.log(error.code, error.message);
+      console.log(error.message);
     }
   };
 

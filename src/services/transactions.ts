@@ -13,7 +13,7 @@ import { combineReducers, AnyAction } from 'redux';
 import authStore from './auth/store';
 import { configureStore } from '@reduxjs/toolkit';
 import thunk from 'redux-thunk';
-
+import moment from 'moment';
 const uid = localStorage.getItem('@Auth:uid');
 
 // Actions
@@ -25,14 +25,15 @@ const getTransaction = transaction => ({
   type: 'GET_TRANSACTIONS',
   payload: transaction,
 });
+const getTransactionByMonth = transaction => ({
+  type: 'GET_TRANSACTIONS_BY_MONTH',
+  payload: transaction,
+});
 const updateTransaction = transaction => ({
   type: 'UPDATE_TRANSACTION',
   payload: transaction,
 });
 const deleteTransaction = transaction => ({ type: 'DELETE_TRANSACTION', payload: transaction });
-
-const getFilteredTransactions = (type: string) => (state: any) =>
-  state.transactions.transactions.filter((transaction: any) => transaction.type === type);
 
 // Função para obter todas as transactions (expenses e revenues)
 enum TransactionType {
@@ -42,6 +43,7 @@ enum TransactionType {
 
 const initialState = {
   transactions: [],
+  transactionsByMonth: [],
 };
 
 const transactionReducer = (state = initialState, action: any) => {
@@ -51,18 +53,29 @@ const transactionReducer = (state = initialState, action: any) => {
         ...state,
         transactions: action.payload,
       };
+    case 'GET_TRANSACTIONS_BY_MONTH':
+      return {
+        ...state,
+        transactionsByMonth: action.payload,
+      };
+
     case 'DELETE_TRANSACTION':
       const transactions = state.transactions.filter(
+        (transaction: any) => transaction.id !== action.payload
+      );
+      const transactionsByMonth = state.transactionsByMonth.filter(
         (transaction: any) => transaction.id !== action.payload
       );
       return {
         ...state,
         transactions: transactions,
+        transactionsByMonth: transactionsByMonth,
       };
     case 'ADD_TRANSACTION':
       return {
         ...state,
         transactions: [...state.transactions, action.payload],
+        transactionsByMonth: [...state.transactionsByMonth, action.payload],
       };
     case 'UPDATE_TRANSACTION':
       const updatedTransactions = [...state.transactions];
@@ -70,9 +83,11 @@ const transactionReducer = (state = initialState, action: any) => {
         transaction => transaction.id === action.payload.id
       );
       updatedTransactions[index] = action.payload;
+
       return {
         ...state,
         transactions: updatedTransactions,
+        transactionsByMonth: updatedTransactions,
       };
     default:
       return state;
@@ -89,7 +104,6 @@ const transactionsStore = configureStore({
 });
 
 const getTransactions = (type?: TransactionType) => async (dispatch: any) => {
-  // definindo uma nova função que recebe o uid como parâmetro
   let queryRef = collection(db, `transactions/${uid}/user_transactions`);
 
   if (type) {
@@ -99,6 +113,16 @@ const getTransactions = (type?: TransactionType) => async (dispatch: any) => {
   const transactions = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
   dispatch(getTransaction(transactions));
+};
+
+const getTransactionsByMonth = (month: number) => async (dispatch: any, getState: any) => {
+  const { transactions } = getState().transactions;
+  console.log(transactions);
+
+  const filteredTransactions = transactions.filter(
+    transaction => Number(moment.unix(transaction.date).format('MM')) == month
+  );
+  dispatch(getTransactionByMonth(filteredTransactions));
 };
 
 const insertDocument = (data: string) => async (dispatch: any) => {
@@ -147,6 +171,6 @@ export {
   deleteDocumentById,
   transactionsStore,
   getTransactions,
-  getFilteredTransactions,
   updateDocumentById,
+  getTransactionsByMonth,
 };

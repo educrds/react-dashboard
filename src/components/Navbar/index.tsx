@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
 import Brand from '../Brand';
-import './styles.scss';
 import {
   TrendingUpOutlined,
   TrendingDownOutlined,
@@ -13,17 +12,24 @@ import {
 } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { NavbarContext } from '../../contexts/NavbarContext';
+import { useNavigate } from 'react-router-dom';
 import AddButtonMenu from '../AddMenu';
+import './styles.scss';
 
 const Navbar = () => {
   const [activeIndex, setActiveIndex] = useState(null);
   const { handleCollapseToggle, isCollapsed } = useContext(NavbarContext);
   const [addMenuOpen, setAddMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleClick = (index: number | null): void => setActiveIndex(index);
-  const renderText = (text: string): JSX.Element | null => !isCollapsed ? <span>{text}</span> : null;
+  const renderText = (text: string): JSX.Element | null =>
+    !isCollapsed ? <span>{text}</span> : null;
   const addHandleClick = () => setAddMenuOpen(!addMenuOpen);
-  const handleLogout = () => localStorage.clear();
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/');
+  };
 
   return (
     <nav className={`${isCollapsed && 'collapsed'}`}>

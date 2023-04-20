@@ -31,16 +31,20 @@ interface Category {
 }
 
 export const categories: Category[] = [
-  { category: 'Serviços', type: 'expense', color: '#8ecae6' },
-  { category: 'Aluguel', type: 'expense', color: '#219ebc' },
+  { category: 'Serviços', type: 'expense', color: '#402dec' },
+  { category: 'Aluguel', type: 'expense', color: '#a654cc' },
+  { category: 'Farmácia', type: 'expense', color: '#70cee6' },
+  { category: 'Vestuário', type: 'expense', color: '#5b9436' },
   { category: 'Casa', type: 'expense', color: '#023047' },
   { category: 'Lazer', type: 'expense', color: '#ffb703' },
   { category: 'Internet', type: 'expense', color: '#fb8500' },
-  { category: 'Mercado', type: 'expense', color: '#d62828' },
-  { category: 'Mensalidades', type: 'expense', color: '#60d394' },
+  { category: 'Alimentos', type: 'expense', color: '#d62828' },
   { category: 'Transporte', type: 'expense', color: '#e76f51' },
+  { category: 'Faculdade', type: 'expense', color: '#e74f81' },
+  { category: 'Saúde', type: 'expense', color: '#a54e80' },
   { category: 'Salário', type: 'revenue', color: '#60d394' },
-  { category: 'Outras receitas', type: 'revenue', color: '#90be6d' },
+  { category: 'Mercado', type: 'revenue', color: '#5b9436' },
+  { category: 'Outras receitas', type: 'revenue', color: '#5b9436' },
   { category: 'Outras despesas', type: 'expense', color: '#bfbfbf' },
 ];
 

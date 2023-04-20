@@ -1,6 +1,6 @@
 import React from 'react';
 import AllTransactions from '../../components/AllTransactions';
-import BarChart from '../../components/ChartBar';
+import ChartBar from '../../components/ChartBar';
 import Wrapper from '../../components/Wrapper';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
@@ -23,7 +23,7 @@ const Expense = () => {
       <h2>Despesas</h2>
       <div className='revenue__charts'>
         <ExpenseDoughnutChart />
-        <BarChart
+        <ChartBar
           title='Despesas'
           datasets={[
             {
@@ -41,7 +41,7 @@ const Expense = () => {
 
 export const ExpenseDoughnutChart = () => {
   const title = 'Despesas por categoria';
-  const transactions = useSelector((state: any) => state.transactions.transactions);
+  const transactions = useSelector((state: any) => state.transactions.transactionsByMonth);
 
   const expensesByCategory = transactions.reduce((acc: any, curr: any) => {
     if (curr.type === 'expenses') {
@@ -57,6 +57,7 @@ export const ExpenseDoughnutChart = () => {
 
   const labels = Object.keys(expensesByCategory);
   const data = Object.values(expensesByCategory);
+  
   return <DoughnutChart title={title} labels={labels} data={data} />;
 };
 

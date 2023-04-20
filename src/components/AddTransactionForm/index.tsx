@@ -16,6 +16,7 @@ import {
   DescriptionRounded,
   LabelRounded,
   Backspace,
+  ReplayRounded,
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -78,9 +79,12 @@ const AddTransactionForm = ({
     date: '',
     type: '',
   };
-  const [uid] = useState('iVmUSglTCiR0GvPdWNzMzstEb3R2');
   const dispatch = useDispatch();
   const [formData, setFormData] = useState(initialFormData);
+  const [repeat, setRepeat] = useState({
+    value: 1,
+    checked: false,
+  });
 
   useEffect(() => {
     if (transactionToEdit) {
@@ -89,15 +93,14 @@ const AddTransactionForm = ({
   }, [transactionToEdit]);
 
   const handleValueChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    console.log(event.target.value);
     setFormData(prevFormData => ({
       ...prevFormData,
       value: event.target.value,
     }));
   };
 
-  const handleStatusCheck = () =>
-    setFormData(prevFormData => ({ ...prevFormData, status: !prevFormData.status }));
+  const handleStatusCheck = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setFormData(prevFormData => ({ ...prevFormData, status: event.target.checked }));
 
   const handleCategoryChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
     setFormData(prevFormData => ({
@@ -111,17 +114,55 @@ const AddTransactionForm = ({
       description: event.target.value,
     }));
 
-  const handleDateChange = newDate => {
-    console.log(newDate);
+  const handleDateChange = newDate =>
     setFormData(prevFormData => ({ ...prevFormData, date: newDate }));
+
+  const handleRepeatCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.target.checked;
+    setRepeat({ ...repeat, checked: isChecked });
+  };
+
+  const handleRepeatValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    if (value <= 0) {
+      return;
+    }
+    setRepeat({ ...repeat, value: value });
   };
 
   const handleSubmit = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.preventDefault();
     const updatedFormData = { ...formData, type: transactionType };
-    transactionToEdit
-      ? dispatch(updateDocumentById(uid, transactionToEdit.id, formData))
-      : dispatch(insertDocument(uid, updatedFormData));
+    const repeatCount = repeat.value || 1; // Se o switch "repetir" não foi selecionado, repetir apenas uma vez
+    const transactionsToInsert = []; // Array para armazenar as transações a serem inseridas
+    const interval = moment.duration(1, 'month'); // Intervalo de tempo entre cada repetição
+    let lastDate = moment.unix(updatedFormData.date);
+
+    // Arredondar o valor da transação para a casa decimal mais próxima
+    const valuePerTransaction = Math.round((updatedFormData.value / repeatCount) * 100) / 100;
+
+    // Gerar as transações a serem inseridas
+    for (let i = 1; i <= repeatCount; i++) {
+      // Obter a data da transação para cada repetição
+      let date;
+      if (i === 1) {
+        date = lastDate;
+      } else {
+        date = lastDate.clone().add(interval);
+      }
+      const timestamp = date.unix(); // Converter a data para Unix Timestamp
+      const transaction = { ...updatedFormData, value: valuePerTransaction, date: timestamp };
+      transactionsToInsert.push(transaction);
+      lastDate = date.clone(); // Atualizar a última data inserida
+    }
+
+    // Inserir as transações no BD
+    if (transactionToEdit) {
+      dispatch(updateDocumentById(transactionToEdit.id, formData));
+    } else {
+      transactionsToInsert.forEach(transaction => dispatch(insertDocument(transaction)));
+    }
+
     setFormData(initialFormData);
     onClose();
   };
@@ -148,8 +189,7 @@ const AddTransactionForm = ({
             <FormControlLabel
               label={transactionType === 'revenues' ? 'Recebida' : 'Paga'}
               labelPlacement='end'
-              control={<Switch color='primary' />}
-              onChange={handleStatusCheck}
+              control={<Switch color='primary' onChange={handleStatusCheck} />}
             />
           </ToggleContainer>
         </Grid>
@@ -171,6 +211,31 @@ const AddTransactionForm = ({
             handleCategoryChange={handleCategoryChange}
             transactionType={transactionType === 'revenues' ? 'revenue' : 'expense'}
           />
+        </Grid>
+        <Grid item md={12}>
+          <ToggleContainer>
+            {repeat.checked && (
+              <InputBoxIcon>
+                <ReplayRounded />
+                <TextField
+                  id='input-with-sx'
+                  variant='standard'
+                  type='number'
+                  value={repeat.value}
+                  onChange={handleRepeatValue}
+                  fullWidth
+                  InputProps={{
+                    endAdornment: <InputAdornment position='end'>vezes</InputAdornment>,
+                  }}
+                />
+              </InputBoxIcon>
+            )}
+            <FormControlLabel
+              label='Repetir'
+              labelPlacement='end'
+              control={<Switch color='primary' onChange={handleRepeatCheck} />}
+            />
+          </ToggleContainer>
         </Grid>
         <Grid item>
           <ButtonBox>

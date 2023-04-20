@@ -40,9 +40,10 @@ const ToggleContainer = styled(Box)({
   display: 'flex',
   justifyContent: 'flex-end',
   marginBottom: '-16px',
-
+  
   '& .MuiFormControlLabel-root': {
     marginRight: 0,
+    marginLeft: '24px',
     fontFamily: 'Poppins',
     color: '#bfbfbf',
   },

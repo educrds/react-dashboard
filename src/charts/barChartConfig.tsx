@@ -66,6 +66,21 @@ const options = {
   },
 };
 
-const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+const labels = [
+  'Janeiro',
+  'Fevereiro',
+  'Março',
+  'Abril',
+  'Maio',
+  'Junho',
+  'Julho',
+  'Agosto',
+  'Setembro',
+  'Outubro',
+  'Novembro',
+  'Dezembro',
+];
 
-export { options, labels };
+const shortLabels = labels.map(label => label.substring(0, 3));
+
+export { options, labels, shortLabels };

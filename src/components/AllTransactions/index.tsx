@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams, ptBR } from '@mui/x-data-grid';
-import { DeleteOutlineRounded, EditOutlined } from '@mui/icons-material';
-import { Tab, Tabs, Box, Chip, Divider, IconButton, createTheme, ThemeProvider } from '@mui/material';
+import { DeleteOutlineRounded, EditOutlined, KeyboardArrowDownRounded } from '@mui/icons-material';
+import {
+  Box,
+  Chip,
+  Divider,
+  IconButton,
+  createTheme,
+  ThemeProvider,
+  Button,
+  MenuItem,
+} from '@mui/material';
+import { StyledMenu } from '../../pages/Dashboard';
 import { categoryColors } from '../../charts/doughnutChartConfig';
 import PaymentChip from '../PaymentChip';
 import moment from 'moment';
@@ -10,60 +20,63 @@ import { useSelector, useDispatch } from 'react-redux';
 import AddTransactionModal from '../AddTransactionModal';
 import './styles.scss';
 
-const theme = createTheme({
-  ptBR,
-  components: {
-    MuiDataGrid: {
-      styleOverrides: {
-        root: {
-          fontFamily: 'Poppins',
-          color: '#666',
-          backgroundColor: '#fcfcfc',
-          borderRadius: '0.5rem',
+const theme = createTheme(
+  {
+    ptBR,
+    components: {
+      MuiDataGrid: {
+        styleOverrides: {
+          root: {
+            fontFamily: 'Poppins',
+            color: '#666',
+            backgroundColor: '#fcfcfc',
+            borderRadius: '0.5rem',
+          },
         },
       },
-    },
-    MuiTab: {
-      styleOverrides: {
-        root: {
-          borderRadius: '.5rem',
-          fontFamily: 'Poppins',
-          padding: 0,
-          minHeight: '36px',
-          fontSize: '.8rem',
-          color: '#BFBFBF',
-          '&.Mui-selected': {
-            backgroundColor: '#215DBE',
-            color: '#F2F5FC',
-            fontWeight: 600,
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            borderRadius: '.5rem',
+            fontFamily: 'Poppins',
+            padding: 0,
+            minHeight: '36px',
+            fontSize: '.8rem',
+            color: '#BFBFBF',
+            '&.Mui-selected': {
+              backgroundColor: '#215DBE',
+              color: '#F2F5FC',
+              fontWeight: 600,
+            },
+          },
+        },
+      },
+      MuiTabs: {
+        styleOverrides: {
+          root: {
+            alignItems: 'center',
+          },
+          indicator: {
+            display: 'none',
+          },
+          scroller: {
+            height: '100%',
+          },
+        },
+      },
+      MuiChip: {
+        styleOverrides: {
+          root: {
+            fontFamily: 'Poppins',
+            height: '30px',
+            fontWeight: 500,
           },
         },
       },
     },
-    MuiTabs: {
-      styleOverrides: {
-        root: {
-          alignItems: 'center',
-        },
-        indicator: {
-          display: 'none',
-        },
-        scroller: {
-          height: '100%',
-        },
-      },
-    },
-    MuiChip: {
-      styleOverrides: {
-        root: {
-          fontFamily: 'Poppins',
-          height: '30px',
-          fontWeight: 500,
-        },
-      },
-    },
   },
-});
+  ptBR
+);
 
 const columns: GridColDef[] = [
   {
@@ -90,8 +103,15 @@ const columns: GridColDef[] = [
   {
     field: 'description',
     headerName: 'Descrição',
-    flex: 2,
+    flex: 1,
     headerClassName: 'table_header_color',
+    valueFormatter: params => {
+      const words = params.value.split(' ');
+      const capitalizedWords = words.map(
+        word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      );
+      return capitalizedWords.join(' ');
+    },
   },
   {
     field: 'category',
@@ -123,45 +143,52 @@ interface PropsAllTransactions {
   type?: string;
 }
 
-const AllTransactions = ({ type }: PropsAllTransactions) => {
-  const [uid] = useState('iVmUSglTCiR0GvPdWNzMzstEb3R2');
-  const [selectedTab, setSelectedTab] = useState(0);
+const AllTransactions = ({ type, month }: PropsAllTransactions) => {
+  const [selectedValue, setSelectedValue] = useState('');
   const [tableData, setTableData] = useState([]);
   const [selectedRow, setSelectedRow] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
+  const open = Boolean(anchorEl);
   const dispatch = useDispatch();
-  const allTransactions = useSelector((state: any) => state.transactions.transactions);
+  const transactions = useSelector((state: any) => state.transactions.transactions);
+  const transactionsByMonth = useSelector((state: any) => state.transactions.transactionsByMonth);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => setSelectedTab(newValue);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
+  const handleClose = () => setAnchorEl(null);
+  const handleTabChange = (event: React.SyntheticEvent) => {
+    handleClose();
+    setSelectedValue(event.currentTarget.getAttribute('value') || '');
+  };
 
   const filterRowsByType = (row: any) => {
-    if (selectedTab === 1) {
+    if (selectedValue === 'Despesas') {
       return row.type === 'expenses';
     }
-    if (selectedTab === 2) {
+    if (selectedValue === 'Receitas') {
       return row.type === 'revenues';
     }
     return true;
   };
 
   const filterRows = () => {
-    const filteredTransactions = allTransactions.filter(filterRowsByType);
+    // problema de renderizar automatico apos CRUD aqui
+    const filteredTransactions = transactionsByMonth.filter(filterRowsByType);
     setTableData(filteredTransactions);
   };
 
   useEffect(() => {
-    dispatch(getTransactions(uid, type));
-  }, [dispatch, uid]);
-  
+    dispatch(getTransactions(type));
+  }, [dispatch, month]);
+
   useEffect(() => {
     filterRows();
-  }, [allTransactions, selectedTab, type]);
+  }, [transactions, selectedValue, type]);
   
-
   const handleEdit = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
-  const handleDelete = () => dispatch(deleteDocumentById(uid, selectedRow));
+  const handleDelete = () => dispatch(deleteDocumentById(selectedRow));
 
   return (
     <ThemeProvider theme={theme}>
@@ -170,16 +197,45 @@ const AllTransactions = ({ type }: PropsAllTransactions) => {
         <Box sx={{ display: 'flex', textAlign: 'center', alignItems: 'center' }}>
           {selectedRow && <EditMenu handleDelete={handleDelete} handleEdit={handleEdit} />}
           {!type && (
-            <Tabs value={selectedTab} onChange={handleTabChange}>
-              <Tab label='Tudo' />
-              <Tab label='Despesas' />
-              <Tab label='Receitas' />
-            </Tabs>
+            <div>
+              <Button
+                id='demo-customized-button'
+                aria-controls={open ? 'demo-customized-menu' : undefined}
+                aria-haspopup='true'
+                aria-expanded={open ? 'true' : undefined}
+                variant='contained'
+                disableElevation
+                onClick={handleClick}
+                endIcon={<KeyboardArrowDownRounded />}
+                sx={{ textTransform: 'capitalize', borderRadius: '.5rem', fontSize: '1rem' }}
+              >
+                {selectedValue || 'Tudo'}
+              </Button>
+              <StyledMenu
+                id='demo-customized-menu'
+                MenuListProps={{
+                  'aria-labelledby': 'demo-customized-button',
+                }}
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={handleTabChange} value={'Tudo'}>
+                  Tudo
+                </MenuItem>
+                <MenuItem onClick={handleTabChange} value={'Despesas'}>
+                  Despesas
+                </MenuItem>
+                <MenuItem onClick={handleTabChange} value={'Receitas'}>
+                  Receitas
+                </MenuItem>
+              </StyledMenu>
+            </div>
           )}
         </Box>
       </div>
       <TransactionsTable
-        key={selectedTab}
+        key={selectedValue}
         tableData={tableData}
         columns={columns}
         setSelectedRow={setSelectedRow}
@@ -199,8 +255,7 @@ const EditMenu = ({ handleDelete, handleEdit }) => {
       <Box
         sx={{
           display: 'flex',
-          height: 50,
-          marginRight: '3vw',
+          height: 42,
           alignItems: 'center',
           width: 'fit-content',
           border: theme => `1px solid ${theme.palette.divider}`,
@@ -209,9 +264,6 @@ const EditMenu = ({ handleDelete, handleEdit }) => {
           color: 'text.secondary',
           '& svg': {
             m: 1.5,
-          },
-          '& hr': {
-            mx: 0.5,
           },
         }}
       >
@@ -234,15 +286,32 @@ interface TransactionsTableProps {
 }
 
 const TransactionsTable = ({ tableData, columns, setSelectedRow }: TransactionsTableProps) => {
+  const [sortModel, setSortModel] = React.useState([
+    {
+      field: 'date',
+      sort: 'desc',
+    },
+  ]);
+
   const handleRowSelectionChange = selectedRows => {
     const selectedRow = tableData.find(row => row.id === selectedRows[0]);
     setSelectedRow(selectedRow);
   };
+
   return (
     <DataGrid
       rows={tableData}
       columns={columns}
       autoHeight
+      columnHeaderHeight={50}
+      disableColumnSelector
+      initialState={{
+        ...tableData.initialState,
+        pagination: { paginationModel: { pageSize: 10 } },
+      }}
+      sortModel={sortModel}
+      onSortModelChange={model => setSortModel(model)}
+      pageSizeOptions={[5, 10, 15, 25]}
       onRowSelectionModelChange={handleRowSelectionChange}
     />
   );

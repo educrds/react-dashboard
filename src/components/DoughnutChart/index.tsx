@@ -9,31 +9,40 @@ type DoughnutChartProps = {
   data: number[];
   colors: string[];
   backgroundColor: string[];
+  fallbackLabel: string;
 };
 
-const labelCenter = {
-  beforeDatasetsDraw(chart) {
-    const { ctx } = chart;
-    const total = `R$ ${chart.data.datasets[0].data.reduce((acc, curr) => acc + curr, 0)}`;
-    const fontSize = 16;
-    ctx.font = `medium ${fontSize}px Poppins`;
-    ctx.textAlign = 'center';
-    ctx.baseline = 'middle';
-    ctx.fillStyle = '#bfbfbf';
-    const x = chart.getDatasetMeta(0).data[0].x;
-    const y = chart.getDatasetMeta(0).data[0].y;
-    ctx.fillText(total, x, y);
-    ctx.save();
-  },
-};
+// const labelCenter = {
+//   beforeDatasetsDraw(chart) {
+//     const { ctx } = chart;
+//     if (chart.data.datasets[0]) {
+//       const total = `R$ ${chart.data.datasets[0].data.reduce((acc, curr) => acc + curr, 0)}`;
+//       const fontSize = 16;
+//       ctx.font = `medium ${fontSize}px Poppins`;
+//       ctx.textAlign = 'center';
+//       ctx.baseline = 'middle';
+//       ctx.fillStyle = '#bfbfbf';
+//       const x = chart.getDatasetMeta(0).data[0].x;
+//       const y = chart.getDatasetMeta(0).data[0].y;
+//       ctx.fillText(total, x, y);
+//       ctx.save();
+//     }
+//   },
+// };
 
-const DoughnutChart = ({ title, labels, data }: DoughnutChartProps) => {
+const DoughnutChart = ({
+  title,
+  labels,
+  data,
+  fallbackLabel = 'Sem dados',
+}: DoughnutChartProps) => {
+
   const chartData = {
-    labels,
+    labels: data.length > 0 ? labels : [fallbackLabel],
     datasets: [
       {
-        data,
-        backgroundColor: labels.map(label => categoryColors[label]),
+        data: data.length > 0 ? data : [1],
+        backgroundColor: data.length > 0 ? labels.map(label => categoryColors[label]) : '#bfbfbf',
       },
     ],
   };
@@ -48,7 +57,7 @@ const DoughnutChart = ({ title, labels, data }: DoughnutChartProps) => {
 
   return (
     <DashboardItem>
-      <Doughnut options={chartOptions} data={chartData} plugins={[labelCenter]} />
+      <Doughnut options={chartOptions} data={chartData} />
     </DashboardItem>
   );
 };
