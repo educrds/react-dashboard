@@ -15,7 +15,7 @@ import { StyledMenu } from '../../pages/Dashboard';
 import { categoryColors } from '../../charts/doughnutChartConfig';
 import PaymentChip from '../PaymentChip';
 import moment from 'moment';
-import { deleteDocumentById, getTransactions } from '../../services/transactions';
+import { deleteDocumentById, getTransactions } from '../../services/transactions/selectors';
 import { useSelector, useDispatch } from 'react-redux';
 import AddTransactionModal from '../AddTransactionModal';
 import './styles.scss';

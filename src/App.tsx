@@ -9,7 +9,7 @@ import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import { NavbarContextProvider } from './contexts/NavbarContext';
 import { Provider } from 'react-redux';
-import { transactionsStore } from './services/transactions';
+import { transactionsStore } from './services/transactions/constants';
 import authStore from './services/auth/store';
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';

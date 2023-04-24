@@ -24,7 +24,7 @@ import moment from 'moment';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { categories } from '../../charts/doughnutChartConfig';
 import { NumericFormat } from 'react-number-format';
-import { insertDocument, updateDocumentById } from '../../services/transactions';
+import { insertDocument, updateDocumentById } from '../../services/transactions/selectors';
 import { useDispatch } from 'react-redux';
 import { MainGrid, InputBoxIcon, ButtonBox, ToggleContainer } from './styles';
 

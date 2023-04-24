@@ -10,7 +10,7 @@ import moment from 'moment';
 import { MenuItem, Menu, Button, styled, alpha } from '@mui/material';
 import { KeyboardArrowDownRounded } from '@mui/icons-material';
 import { labels } from '../../charts/barChartConfig';
-import { getTransactionsByMonth } from '../../services/transactions';
+import { getTransactionsByMonth } from '../../services/transactions/selectors';
 import './styles.scss';
 
 const Dashboard = () => {
@@ -21,7 +21,7 @@ const Dashboard = () => {
   const revenuesData = Array(12).fill(0);
   const expensesData = Array(12).fill(0);
 
-  const handleMonthChange = month => {
+  const handleMonthChange = (month) => {
     dispatch(getTransactionsByMonth(month));
     setSelectedMonth(month);
   };
