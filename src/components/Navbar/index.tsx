@@ -6,7 +6,6 @@ import {
   GridViewOutlined,
   ReceiptLongOutlined,
   ExitToAppOutlined,
-  AddOutlined,
   KeyboardArrowRightRounded,
   KeyboardArrowLeftRounded,
 } from '@mui/icons-material';
@@ -19,13 +18,11 @@ import './styles.scss';
 const Navbar = () => {
   const [activeIndex, setActiveIndex] = useState(null);
   const { handleCollapseToggle, isCollapsed } = useContext(NavbarContext);
-  const [addMenuOpen, setAddMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleClick = (index: number | null): void => setActiveIndex(index);
   const renderText = (text: string): JSX.Element | null =>
     !isCollapsed ? <span>{text}</span> : null;
-  const addHandleClick = () => setAddMenuOpen(!addMenuOpen);
   const handleLogout = () => {
     localStorage.clear();
     navigate('/');
@@ -37,8 +34,7 @@ const Navbar = () => {
         <Brand />
         <ToggleButton onClick={handleCollapseToggle} collapsed={isCollapsed} />
         <div className='nav__menu'>
-          <AddButton onClick={addHandleClick} text={renderText('Novo')} collapsed={isCollapsed} />
-          {addMenuOpen && <AddButtonMenu />}
+          <AddButtonMenu collapsed={isCollapsed} />
           <NavButton
             icon={<GridViewOutlined />}
             text={renderText('Dashboard')}
@@ -47,6 +43,7 @@ const Navbar = () => {
             isActive={activeIndex === 0}
             to='/dashboard'
           />
+
           <NavButton
             icon={<TrendingUpOutlined />}
             text={renderText('Receitas')}
@@ -110,24 +107,6 @@ const ToggleButton = ({ onClick, collapsed }: ToggleButtonProps) => {
     </div>
   );
 };
-
-interface AddButtonProps {
-  onClick: () => void;
-  text: string;
-  collapsed: boolean;
-}
-
-const AddButton = ({ onClick, text, collapsed }: AddButtonProps) => {
-  return (
-    <div className={`nav__button__container add__button`} onClick={onClick}>
-      <div>
-        <AddOutlined />
-        {!collapsed ? <span>{text}</span> : null}
-      </div>
-    </div>
-  );
-};
-
 interface LogoutButtonProps {
   onClick: () => void;
   text: string;

@@ -1,56 +1,71 @@
 import React, { useState } from 'react';
-import { MenuList, MenuItem, ListItemIcon, Divider } from '@mui/material';
-import { TrendingDownOutlined, TrendingUpOutlined } from '@mui/icons-material';
+import { MenuList, MenuItem, ListItemIcon, Divider, Typography } from '@mui/material';
+import { TrendingDownOutlined, TrendingUpOutlined, AddOutlined } from '@mui/icons-material';
 import AddTransactionModal from '../AddTransactionModal';
 import { PaperContainer, ItemText } from './styles';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import ListItemText from '@mui/material/ListItemText';
 
-const AddButtonMenu = () => {
-  const [open, setOpen] = useState(false);
+const AddButtonMenu = ({ collapsed }) => {
+  const [openModal, setOpenModal] = useState(false);
   const [transactionType, setTransactionType] = useState('');
 
-  const handleOpen = event => {
-    setTransactionType(event.currentTarget.getAttribute('data-type'));
-    setOpen(true);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const isOpen = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = event => {
+    const transactionType = event.currentTarget.getAttribute('data-type');
+    if (transactionType) {
+      setTransactionType(transactionType);
+      setOpenModal(true);
+    }
+    setAnchorEl(null);
   };
 
-  const handleClose = () => setOpen(false);
+  const handleModalClose = () => setOpenModal(false);
 
   return (
     <>
-      <PaperContainer>
-        <MenuList>
-          <MenuLabel
-            onClick={handleOpen}
-            icon={<TrendingUpOutlined sx={{ color: '#22c58b' }} />}
-            text='Receita'
-            data-type='revenues'
-          />
-          <Divider />
-          <MenuLabel
-            onClick={handleOpen}
-            icon={<TrendingDownOutlined sx={{ color: '#eb3d3d' }} />}
-            text='Despesa'
-            data-type='expenses'
-          />
-        </MenuList>
-      </PaperContainer>
-      <AddTransactionModal onClose={handleClose} open={open} type={transactionType} />
+      <div>
+        <Button
+          className='nav__button__container add__button'
+          aria-controls={isOpen ? 'basic-menu' : undefined}
+          aria-haspopup='true'
+          aria-expanded={isOpen ? 'true' : undefined}
+          onClick={handleClick}
+          id='basic-button'
+        >
+          <AddOutlined />
+          {!collapsed ? <span>Novo</span> : null}
+        </Button>
+        <Menu
+          id='basic-menu'
+          anchorEl={anchorEl}
+          open={isOpen}
+          onClose={handleClose}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+        >
+          <MenuItem onClick={handleClose} data-type='revenues' id='revenue'>
+            <ListItemIcon>
+              <TrendingUpOutlined sx={{ color: '#22c58b' }} />
+            </ListItemIcon>
+            <ListItemText>Receita</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleClose} data-type='expenses' id='expense'>
+            <ListItemIcon>
+              <TrendingDownOutlined sx={{ color: '#eb3d3d' }} />
+            </ListItemIcon>
+            <ListItemText>Despesa</ListItemText>
+          </MenuItem>
+        </Menu>
+      </div>
+      <AddTransactionModal onClose={handleModalClose} open={openModal} type={transactionType} />
     </>
-  );
-};
-
-interface MenuLabelProps {
-  onClick: () => {};
-  icon: React.ReactNode;
-  text: string;
-}
-
-const MenuLabel = ({ onClick, icon, text, ...props }: MenuLabelProps) => {
-  return (
-    <MenuItem onClick={onClick} {...props}>
-      <ListItemIcon>{icon}</ListItemIcon>
-      <ItemText>{text}</ItemText>
-    </MenuItem>
   );
 };
 
