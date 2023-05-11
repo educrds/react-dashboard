@@ -18,13 +18,14 @@ import {
   Backspace,
   ReplayRounded,
 } from '@mui/icons-material';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { ptBR } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import moment from 'moment';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { categories } from '../../charts/doughnutChartConfig';
 import { NumericFormat } from 'react-number-format';
-import { insertDocument, updateDocumentById } from '../../services/transactions/selectors';
+import { insertDocument, updateDocumentById } from '../../services/redux/transactions/selectors';
 import { useDispatch } from 'react-redux';
 import { MainGrid, InputBoxIcon, ButtonBox, ToggleContainer } from './styles';
 
@@ -114,8 +115,8 @@ const AddTransactionForm = ({
       description: event.target.value,
     }));
 
-  const handleDateChange = newDate =>
-    setFormData(prevFormData => ({ ...prevFormData, date: newDate }));
+  // const handleDateChange = newDate =>
+  //   setFormData(prevFormData => ({ ...prevFormData, date: newDate }));
 
   const handleRepeatCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = event.target.checked;
@@ -189,12 +190,14 @@ const AddTransactionForm = ({
             <FormControlLabel
               label={transactionType === 'revenues' ? 'Recebida' : 'Paga'}
               labelPlacement='end'
-              control={<Switch color='primary' onChange={handleStatusCheck} />}
+              control={
+                <Switch color='primary' onChange={handleStatusCheck} checked={formData.status} />
+              }
             />
           </ToggleContainer>
         </Grid>
         <Grid item md={12}>
-          <DateInput onDateChange={handleDateChange} />
+          <DateInput formData={formData} setFormData={setFormData} />
         </Grid>
         <Grid item md={12}>
           <InputWithIcon
@@ -336,49 +339,61 @@ const CategoryInput: React.FC<CategoryInputProps> = ({
 
 interface DateInputProps {
   onDateChange: (date: Date | null, value?: string | null) => void;
+  date: Date;
 }
 
-const DateInput = ({ onDateChange }: DateInputProps) => {
-  const [date, setDate] = useState<number>();
+const DateInput = ({ formData, setFormData }: DateInputProps) => {
   const [selectedChipIndex, setSelectedChipIndex] = useState<number>(-1);
 
   const formatDate = (date: moment.Moment) => date.unix();
 
   const setDateFromChipIndex = (index: number) => {
-    const today = moment();
-    const yesterday = moment().subtract(1, 'day');
-    const newDate = index === 0 ? today : yesterday;
+    const newDate = index === 0 ? moment() : moment().subtract(1, 'day');
     const formattedDate = formatDate(newDate);
     setSelectedChipIndex(index);
-    setDate(formattedDate);
-    onDateChange(formattedDate);
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      date: formattedDate,
+    }));
+    // onDateChange(formattedDate);
   };
 
   const handleDateChange = (newDate: moment.Moment) => {
     const formattedDate = formatDate(newDate);
-    setDate(formattedDate);
+
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      date: formattedDate,
+    }));
+
     setSelectedChipIndex(-1);
-    onDateChange(formattedDate);
   };
 
   return (
     <TextField
       variant='standard'
       fullWidth
-      value={date ? moment.unix(date).format('DD/MM/YYYY') : ''}
-      onChange={date ? handleDateChange : () => {}}
+      value={formData.date ? moment.unix(formData.date).format('DD/MM/YYYY') : ''}
+      onChange={formData.date ? handleDateChange : () => {}}
       InputProps={{
         readOnly: true,
         endAdornment: (
           <InputAdornment position='end'>
-            {date && (
-              <IconButton onClick={() => setDate(undefined)}>
+            {formData.date && (
+              <IconButton
+                onClick={() => {
+                  setFormData(prevFormData => ({
+                    ...prevFormData,
+                    date: '',
+                  }));
+                }}
+              >
                 <Backspace fontSize='small' />
               </IconButton>
             )}
           </InputAdornment>
         ),
-        startAdornment: !date && (
+        startAdornment: !formData.date && (
           <Box sx={{ display: 'flex', gap: 0.5, py: 1 }}>
             <Chip
               label='Hoje'
@@ -392,9 +407,12 @@ const DateInput = ({ onDateChange }: DateInputProps) => {
               onClick={() => setDateFromChipIndex(1)}
               color={selectedChipIndex === 1 ? 'primary' : 'default'}
             />
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <LocalizationProvider
+              dateAdapter={AdapterDayjs}
+              localeText={ptBR.components.MuiLocalizationProvider.defaultProps.localeText}
+            >
               <DatePicker
-                value={date ? moment.unix(date) : null}
+                value={formData.date ? moment.unix(formData.date) : null}
                 onChange={handleDateChange}
                 slots={{
                   textField: CustomInput,

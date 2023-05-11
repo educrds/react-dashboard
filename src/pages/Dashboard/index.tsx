@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardOverview from '../../components/DashboardOverview';
 import ChartBar from '../../components/ChartBar';
 import AllTransactions from '../../components/AllTransactions';
@@ -7,10 +7,11 @@ import { RevenueDoughnutChart } from '../Revenue';
 import Wrapper from '../../components/Wrapper';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
+import 'moment/dist/locale/pt-br';
 import { MenuItem, Menu, Button, styled, alpha } from '@mui/material';
 import { KeyboardArrowDownRounded } from '@mui/icons-material';
 import { labels } from '../../charts/barChartConfig';
-import { getTransactionsByMonth } from '../../services/transactions/selectors';
+import { getTransactionsByMonth } from '../../services/redux/transactions/selectors';
 import './styles.scss';
 
 const Dashboard = () => {
@@ -21,10 +22,15 @@ const Dashboard = () => {
   const revenuesData = Array(12).fill(0);
   const expensesData = Array(12).fill(0);
 
-  const handleMonthChange = (month) => {
+  const handleMonthChange = month => {
     dispatch(getTransactionsByMonth(month));
     setSelectedMonth(month);
   };
+
+  useEffect(() => {
+    const mesAtual = moment().month() + 1;
+    dispatch(getTransactionsByMonth(mesAtual));
+  }, [transactions]);
 
   transactions.forEach((transaction: any) => {
     const month = moment.unix(transaction.date).month();
@@ -45,7 +51,7 @@ const Dashboard = () => {
       <MenuBar handleMonthChange={handleMonthChange} />
       <DashboardOverview />
       <Charts data={data} />
-      <AllTransactions month={selectedMonth} />
+      <AllTransactions />
     </Wrapper>
   );
 };
@@ -131,7 +137,7 @@ export const StyledMenu = styled((props: MenuProps) => (
 }));
 
 const MonthDropdown = ({ handleMonthChange }) => {
-  const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState(moment().format('MMMM'));
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 

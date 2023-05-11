@@ -9,7 +9,7 @@ import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import { NavbarContextProvider } from './contexts/NavbarContext';
 import { Provider } from 'react-redux';
-import { transactionsStore } from './services/transactions/constants';
+import { transactionsStore } from './services/redux/transactions/constants';
 import authStore from './services/auth/store';
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
@@ -27,35 +27,33 @@ const App: React.FC = () => {
   return (
     <NavbarContextProvider>
       <BrowserRouter>
-        {/* <Provider store={authStore}> */}
-        <Provider store={transactionsStore}>
-          <Routes>
-            <Route element={<Outlet />}>
-              <Route path='/' element={<Login />} />
-              <Route path='/register' element={<Register />} />
-              <Route
-                element={
-                  <>
-                    <Navbar />
-                    <Outlet />
-                  </>
-                }
-              >
-                {uid ? (
-                  <>
-                    <Route path='/dashboard' element={<Dashboard />} />
-                    <Route path='/receitas' element={<Revenues />} />
-                    <Route path='/despesas' element={<Expenses />} />
-                    <Route path='/transacoes' element={<Transactions />} />
-                  </>
-                ) : (
-                  <Route path='*' element={<Navigate to='/' replace />} />
-                )}
+          <Provider store={transactionsStore}>
+            <Routes>
+              <Route element={<Outlet />}>
+                <Route path='/' element={<Login />} />
+                <Route path='/register' element={<Register />} />
+                <Route
+                  element={
+                    <>
+                      <Navbar />
+                      <Outlet />
+                    </>
+                  }
+                >
+                  {uid ? (
+                    <>
+                      <Route path='/dashboard' element={<Dashboard />} />
+                      <Route path='/receitas' element={<Revenues />} />
+                      <Route path='/despesas' element={<Expenses />} />
+                      <Route path='/transacoes' element={<Transactions />} />
+                    </>
+                  ) : (
+                    <Route path='*' element={<Navigate to='/' replace />} />
+                  )}
+                </Route>
               </Route>
-            </Route>
-          </Routes>
-        </Provider>
-        {/* </Provider> */}
+            </Routes>
+          </Provider>
       </BrowserRouter>
     </NavbarContextProvider>
   );

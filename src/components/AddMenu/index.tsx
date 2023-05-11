@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { MenuList, MenuItem, ListItemIcon, Divider, Typography } from '@mui/material';
+import { MenuItem, ListItemIcon } from '@mui/material';
 import { TrendingDownOutlined, TrendingUpOutlined, AddOutlined } from '@mui/icons-material';
 import AddTransactionModal from '../AddTransactionModal';
-import { PaperContainer, ItemText } from './styles';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import ListItemText from '@mui/material/ListItemText';
@@ -29,8 +28,7 @@ const AddButtonMenu = ({ collapsed }) => {
 
   return (
     <>
-      <div>
-        <Button
+        <div
           className='nav__button__container add__button'
           aria-controls={isOpen ? 'basic-menu' : undefined}
           aria-haspopup='true'
@@ -38,9 +36,11 @@ const AddButtonMenu = ({ collapsed }) => {
           onClick={handleClick}
           id='basic-button'
         >
-          <AddOutlined />
-          {!collapsed ? <span>Novo</span> : null}
-        </Button>
+          <div>
+            <AddOutlined />
+            {!collapsed ? <span>Novo</span> : null}
+          </div>
+        </div>
         <Menu
           id='basic-menu'
           anchorEl={anchorEl}
@@ -63,7 +63,6 @@ const AddButtonMenu = ({ collapsed }) => {
             <ListItemText>Despesa</ListItemText>
           </MenuItem>
         </Menu>
-      </div>
       <AddTransactionModal onClose={handleModalClose} open={openModal} type={transactionType} />
     </>
   );

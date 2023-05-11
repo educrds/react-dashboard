@@ -45,6 +45,7 @@ export const categories: Category[] = [
   { category: 'Salário', type: 'revenue', color: '#60d394' },
   { category: 'Mercado', type: 'expense', color: '#466334' },
   { category: 'Outras receitas', type: 'revenue', color: '#5b9436' },
+  { category: 'Saldo', type: 'revenue', color: '#a2dd7a' },
   { category: 'Outras despesas', type: 'expense', color: '#bfbfbf' },
 ];
 

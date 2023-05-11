@@ -41,9 +41,9 @@ const Expense = () => {
 
 export const ExpenseDoughnutChart = () => {
   const title = 'Despesas por categoria';
-  const transactions = useSelector((state: any) => state.transactions.transactionsByMonth);
-
-  const expensesByCategory = transactions.reduce((acc: any, curr: any) => {
+  const transactionsByMonth = useSelector((state: any) => state.transactions.transactionsByMonth);
+  
+  const expensesByCategory = transactionsByMonth.reduce((acc: any, curr: any) => {
     if (curr.type === 'expenses') {
       const category = curr.category;
       if (!acc[category]) {

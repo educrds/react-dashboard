@@ -1,4 +1,4 @@
-import { db } from '../firebaseConfig';
+import { db } from '../../firebaseConfig';
 import moment from 'moment';
 import { AnyAction } from 'redux';
 import {
@@ -18,7 +18,6 @@ import {
   deleteTransaction,
   updateTransaction,
 } from './actions';
-
 const uid = localStorage.getItem('@Auth:uid');
 
 // Função para obter todas as transactions (expenses e revenues)
@@ -41,6 +40,7 @@ const getTransactions = (type?: TransactionType) => async (dispatch: any) => {
 
 const getTransactionsByMonth = (month: number) => async (dispatch: any, getState: any) => {
   const { transactions } = getState().transactions;
+  
   console.log(transactions);
 
   const filteredTransactions = transactions.filter(

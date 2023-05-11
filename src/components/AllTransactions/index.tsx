@@ -15,7 +15,11 @@ import { StyledMenu } from '../../pages/Dashboard';
 import { categoryColors } from '../../charts/doughnutChartConfig';
 import PaymentChip from '../PaymentChip';
 import moment from 'moment';
-import { deleteDocumentById, getTransactions } from '../../services/transactions/selectors';
+import {
+  deleteDocumentById,
+  getTransactions,
+  getTransactionsByMonth,
+} from '../../services/redux/transactions/selectors';
 import { useSelector, useDispatch } from 'react-redux';
 import AddTransactionModal from '../AddTransactionModal';
 import './styles.scss';
@@ -84,7 +88,6 @@ const columns: GridColDef[] = [
     headerName: 'Situação',
     flex: 1,
     headerClassName: 'table_header_color',
-    sortable: false,
     renderCell: (params: GridValueGetterParams) => {
       const { status, type } = params.row;
       if (type === 'expenses') {
@@ -92,6 +95,7 @@ const columns: GridColDef[] = [
       }
       return <PaymentChip label={status ? 'Recebida' : 'Não recebida'} />;
     },
+    filter: 'agTextColumnFilter', // Exemplo de filtro de texto
   },
   {
     field: 'date',
@@ -143,16 +147,15 @@ interface PropsAllTransactions {
   type?: string;
 }
 
-const AllTransactions = ({ type, month }: PropsAllTransactions) => {
+const AllTransactions = ({ type }: PropsAllTransactions) => {
   const [selectedValue, setSelectedValue] = useState('');
   const [tableData, setTableData] = useState([]);
-  const [selectedRow, setSelectedRow] = useState('');
+  const [selectedTableRow, setSelectedRow] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const open = Boolean(anchorEl);
   const dispatch = useDispatch();
-  const transactions = useSelector((state: any) => state.transactions.transactions);
   const transactionsByMonth = useSelector((state: any) => state.transactions.transactionsByMonth);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
@@ -180,22 +183,22 @@ const AllTransactions = ({ type, month }: PropsAllTransactions) => {
 
   useEffect(() => {
     dispatch(getTransactions(type));
-  }, [dispatch, month]);
+  }, [dispatch]);
 
   useEffect(() => {
     filterRows();
-  }, [transactions, selectedValue, type]);
-  
+  }, [transactionsByMonth, selectedValue, type]);
+
   const handleEdit = () => setShowModal(true);
+  const handleDelete = () => dispatch(deleteDocumentById(selectedTableRow));
   const handleCloseModal = () => setShowModal(false);
-  const handleDelete = () => dispatch(deleteDocumentById(selectedRow));
 
   return (
     <ThemeProvider theme={theme}>
       <div className='transaction_type'>
         <h2>Transações</h2>
-        <Box sx={{ display: 'flex', textAlign: 'center', alignItems: 'center' }}>
-          {selectedRow && <EditMenu handleDelete={handleDelete} handleEdit={handleEdit} />}
+        <Box sx={{ display: 'flex', textAlign: 'center', gap: '16px', alignItems: 'center' }}>
+          {selectedTableRow && <EditMenu handleDelete={handleDelete} handleEdit={handleEdit} />}
           {!type && (
             <div>
               <Button
@@ -243,7 +246,7 @@ const AllTransactions = ({ type, month }: PropsAllTransactions) => {
       <AddTransactionModal
         onClose={handleCloseModal}
         open={showModal}
-        transactionToEdit={selectedRow}
+        transactionToEdit={selectedTableRow}
       />
     </ThemeProvider>
   );
@@ -251,7 +254,7 @@ const AllTransactions = ({ type, month }: PropsAllTransactions) => {
 
 const EditMenu = ({ handleDelete, handleEdit }) => {
   return (
-    <div>
+    <>
       <Box
         sx={{
           display: 'flex',
@@ -275,7 +278,7 @@ const EditMenu = ({ handleDelete, handleEdit }) => {
           <EditOutlined fontSize='small' />
         </IconButton>
       </Box>
-    </div>
+    </>
   );
 };
 
@@ -294,8 +297,8 @@ const TransactionsTable = ({ tableData, columns, setSelectedRow }: TransactionsT
   ]);
 
   const handleRowSelectionChange = selectedRows => {
-    const selectedRow = tableData.find(row => row.id === selectedRows[0]);
-    setSelectedRow(selectedRow);
+    const selectedTableRow = tableData.find(row => row.id === selectedRows[0]);
+    setSelectedRow(selectedTableRow);
   };
 
   return (
