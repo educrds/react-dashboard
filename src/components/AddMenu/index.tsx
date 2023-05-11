@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { MenuItem, ListItemIcon } from '@mui/material';
 import { TrendingDownOutlined, TrendingUpOutlined, AddOutlined } from '@mui/icons-material';
 import AddTransactionModal from '../AddTransactionModal';
-import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import ListItemText from '@mui/material/ListItemText';
 

@@ -140,6 +140,10 @@ const columns: GridColDef[] = [
     headerClassName: 'table_header_color',
     valueFormatter: ({ value }) =>
       new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value),
+    cellClassName: params => {
+      const type = params.row.type; // assuming the type is present in the row object
+      return type === 'expenses' ? 'expenses_value' : 'revenues_value';
+    },
   },
 ];
 
