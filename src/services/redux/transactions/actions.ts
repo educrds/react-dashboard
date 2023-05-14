@@ -14,7 +14,10 @@ const updateTransaction = transaction => ({
   type: 'UPDATE_TRANSACTION',
   payload: transaction,
 });
-const deleteTransaction = transaction => ({ type: 'DELETE_TRANSACTION', payload: transaction });
+const deleteTransaction = transaction => ({ 
+  type: 'DELETE_TRANSACTION',
+  payload: transaction
+ });
 
 export {
   addTransaction,

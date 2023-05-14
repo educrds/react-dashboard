@@ -10,12 +10,17 @@ import moment from 'moment';
 import 'moment/dist/locale/pt-br';
 import { MenuItem, Menu, Button, styled, alpha } from '@mui/material';
 import { KeyboardArrowDownRounded } from '@mui/icons-material';
+import { db } from '../../services/firebaseConfig';
+import { collection, getDocs } from 'firebase/firestore';
 import { labels } from '../../charts/barChartConfig';
 import { getTransactionsByMonth } from '../../services/redux/transactions/selectors';
 import './styles.scss';
 
+const uid = localStorage.getItem('@Auth:uid');
+
 const Dashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState('');
+  const [userPhoto, setUserPhoto] = useState('');
   const transactions = useSelector((state: any) => state.transactions.transactions);
   const dispatch = useDispatch();
 
@@ -26,6 +31,17 @@ const Dashboard = () => {
     dispatch(getTransactionsByMonth(month));
     setSelectedMonth(month);
   };
+
+  const getInfosUser = async () => {
+    const infosUserQuery = collection(db, `transactions/${uid}/user_infos`);
+    const infosUser = await getDocs(infosUserQuery);
+    const { photoUrl } = infosUser.docs[0].data();
+    setUserPhoto(photoUrl);
+  };
+
+  useEffect(() => {
+    getInfosUser();
+  }, []);
 
   useEffect(() => {
     const mesAtual = moment().month() + 1;
@@ -48,7 +64,7 @@ const Dashboard = () => {
 
   return (
     <Wrapper>
-      <MenuBar handleMonthChange={handleMonthChange} />
+      <MenuBar handleMonthChange={handleMonthChange} photo={userPhoto} />
       <DashboardOverview />
       <Charts data={data} />
       <AllTransactions />
@@ -85,16 +101,18 @@ const Chart = ({ title, chart }: ChartProps) => {
   );
 };
 
-const MenuBar = ({ handleMonthChange }) => {
+interface Props {
+  handleMonthChange: (month: string) => void;
+  photo: string;
+}
+
+const MenuBar: React.FC<Props> = ({ handleMonthChange, photo }) => {
   return (
     <div className='dashboard__bar'>
-      <h2>Dashboard</h2>
+      <div>Dashboard</div>
       <MonthDropdown handleMonthChange={handleMonthChange} />
       <div>
-        <img
-          src='https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG.png'
-          alt='profile photo'
-        />
+        <img src={photo} alt='profile photo' />
       </div>
     </div>
   );

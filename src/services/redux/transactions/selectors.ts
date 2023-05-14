@@ -40,8 +40,6 @@ const getTransactions = (type?: TransactionType) => async (dispatch: any) => {
 
 const getTransactionsByMonth = (month: number) => async (dispatch: any, getState: any) => {
   const { transactions } = getState().transactions;
-  
-  console.log(transactions);
 
   const filteredTransactions = transactions.filter(
     transaction => Number(moment.unix(transaction.date).format('MM')) == month
