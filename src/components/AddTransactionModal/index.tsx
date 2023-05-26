@@ -17,6 +17,7 @@ const AddTransactionModal = ({
   type,
   transactionToEdit,
 }: AddTransactionModalProps) => {
+  
   const transactionType = type === 'revenues' ? 'Nova receita' : 'Nova despesa';
 
   return (

@@ -25,7 +25,6 @@ const GoogleAuthButton = ({ text }: Props) => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      console.log(result);
 
       const userInfosQuery = collection(db, `transactions/${user.uid}/user_infos`);
       const userInfos = await getDocs(userInfosQuery);

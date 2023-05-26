@@ -5,6 +5,7 @@ import Revenues from './pages/Revenue';
 import Expenses from './pages/Expense';
 import Transactions from './pages/Transactions';
 import Navbar from './components/Navbar';
+import Preferences from './pages/Preferences';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import { NavbarContextProvider } from './contexts/NavbarContext';
@@ -46,6 +47,7 @@ const App: React.FC = () => {
                       <Route path='/receitas' element={<Revenues />} />
                       <Route path='/despesas' element={<Expenses />} />
                       <Route path='/transacoes' element={<Transactions />} />
+                      <Route path='/preferencias' element={<Preferences />} />
                     </>
                   ) : (
                     <Route path='*' element={<Navigate to='/' replace />} />

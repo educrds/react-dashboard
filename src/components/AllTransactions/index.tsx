@@ -15,11 +15,7 @@ import { StyledMenu } from '../../pages/Dashboard';
 import { categoryColors } from '../../charts/doughnutChartConfig';
 import PaymentChip from '../PaymentChip';
 import moment from 'moment';
-import {
-  deleteDocumentById,
-  getTransactions,
-  getTransactionsByMonth,
-} from '../../services/redux/transactions/selectors';
+import { deleteDocumentById, getTransactions } from '../../services/redux/transactions/selectors';
 import { useSelector, useDispatch } from 'react-redux';
 import AddTransactionModal from '../AddTransactionModal';
 import './styles.scss';
@@ -256,6 +252,7 @@ const AllTransactions = ({ type }: PropsAllTransactions) => {
   );
 };
 
+// Menu editar transação
 const EditMenu = ({ handleDelete, handleEdit }) => {
   return (
     <>
@@ -274,15 +271,29 @@ const EditMenu = ({ handleDelete, handleEdit }) => {
           },
         }}
       >
-        <IconButton onClick={handleDelete} size='small'>
-          <DeleteOutlineRounded fontSize='small' />
-        </IconButton>
+        <DeleteButton onClick={handleDelete} />
         <Divider orientation='vertical' />
-        <IconButton onClick={handleEdit} size='small'>
-          <EditOutlined fontSize='small' />
-        </IconButton>
+        <EditButton onClick={handleEdit} />
       </Box>
     </>
+  );
+};
+
+// Botão deletar dentro do menu editar transação
+const DeleteButton = ({ onClick }) => {
+  return (
+    <IconButton onClick={onClick} size='small'>
+      <DeleteOutlineRounded fontSize='small' />
+    </IconButton>
+  );
+};
+
+// Botão editar dentro do menu editar transação
+const EditButton = ({ onClick }) => {
+  return (
+    <IconButton onClick={onClick} size='small'>
+      <EditOutlined fontSize='small' />
+    </IconButton>
   );
 };
 
@@ -300,9 +311,11 @@ const TransactionsTable = ({ tableData, columns, setSelectedRow }: TransactionsT
     },
   ]);
 
-  const handleRowSelectionChange = selectedRows => {
-    const selectedTableRow = tableData.find(row => row.id === selectedRows[0]);
-    setSelectedRow(selectedTableRow);
+  const handleChangeSelectedRow = idSelectedTableRow => {
+    const selectedTableRowData = tableData.find(
+      allTableData => allTableData.id === idSelectedTableRow[0]
+    );
+    setSelectedRow(selectedTableRowData);
   };
 
   return (
@@ -319,7 +332,7 @@ const TransactionsTable = ({ tableData, columns, setSelectedRow }: TransactionsT
       sortModel={sortModel}
       onSortModelChange={model => setSortModel(model)}
       pageSizeOptions={[5, 10, 15, 25]}
-      onRowSelectionModelChange={handleRowSelectionChange}
+      onRowSelectionModelChange={handleChangeSelectedRow}
     />
   );
 };

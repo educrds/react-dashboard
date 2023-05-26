@@ -8,6 +8,7 @@ import {
   ExitToAppOutlined,
   KeyboardArrowRightRounded,
   KeyboardArrowLeftRounded,
+  Settings 
 } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { NavbarContext } from '../../contexts/NavbarContext';
@@ -67,6 +68,14 @@ const Navbar = () => {
             onClick={() => handleClick(3)}
             isActive={activeIndex === 3}
             to='/transacoes'
+          />
+          <NavButton
+            icon={<Settings />}
+            text={renderText('Preferências')}
+            collapsed={isCollapsed}
+            onClick={() => handleClick(4)}
+            isActive={activeIndex === 4}
+            to='/preferencias'
           />
         </div>
         <LogoutButton onClick={handleLogout} text={renderText('Sair')} />

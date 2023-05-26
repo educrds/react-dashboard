@@ -82,6 +82,7 @@ const AddTransactionForm = ({
   };
   const dispatch = useDispatch();
   const [formData, setFormData] = useState(initialFormData);
+  const [saveButtonClicked, setSaveButtonClicked] = useState('');
   const [repeat, setRepeat] = useState({
     value: 1,
     checked: false,
@@ -131,16 +132,22 @@ const AddTransactionForm = ({
     setRepeat({ ...repeat, value: value });
   };
 
+  const handleButtonSaveClick = event => {
+    const { name } = event.target;
+    setSaveButtonClicked(name);
+  };
+
   const handleSubmit = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.preventDefault();
     const updatedFormData = { ...formData, type: transactionType };
     const repeatCount = repeat.value || 1; // Se o switch "repetir" não foi selecionado, repetir apenas uma vez
-    const transactionsToInsert = []; // Array para armazenar as transações a serem inseridas
-    const interval = moment.duration(1, 'month'); // Intervalo de tempo entre cada repetição
+    const insertRepeatTransactions = []; // Array para armazenar as transações a serem inseridas
+    const monthInterval = moment.duration(1, 'month'); // monthIntervalo de tempo entre cada repetição
     let lastDate = moment.unix(updatedFormData.date);
 
     // Arredondar o valor da transação para a casa decimal mais próxima
-    const valuePerTransaction = Math.round((updatedFormData.value / repeatCount) * 100) / 100;
+    const valuePerRepeatTransactions =
+      Math.round((updatedFormData.value / repeatCount) * 100) / 100;
 
     // Gerar as transações a serem inseridas
     for (let i = 1; i <= repeatCount; i++) {
@@ -149,23 +156,30 @@ const AddTransactionForm = ({
       if (i === 1) {
         date = lastDate;
       } else {
-        date = lastDate.clone().add(interval);
+        date = lastDate.clone().add(monthInterval);
       }
       const timestamp = date.unix(); // Converter a data para Unix Timestamp
-      const transaction = { ...updatedFormData, value: valuePerTransaction, date: timestamp };
-      transactionsToInsert.push(transaction);
+      const transaction = {
+        ...updatedFormData,
+        value: valuePerRepeatTransactions,
+        date: timestamp,
+      };
+      insertRepeatTransactions.push(transaction);
       lastDate = date.clone(); // Atualizar a última data inserida
     }
 
-    // Inserir as transações no BD
+    // Verifica nova transação ou edião da existente e insere no BD
     if (transactionToEdit) {
       dispatch(updateDocumentById(transactionToEdit.id, formData));
     } else {
-      transactionsToInsert.forEach(transaction => dispatch(insertDocument(transaction)));
+      insertRepeatTransactions.forEach(transaction => dispatch(insertDocument(transaction)));
     }
 
     setFormData(initialFormData);
-    onClose();
+
+    if (saveButtonClicked === 'save') {
+      return onClose();
+    }
   };
 
   return (
@@ -240,12 +254,31 @@ const AddTransactionForm = ({
             />
           </ToggleContainer>
         </Grid>
-        <Grid item>
-          <ButtonBox>
-            <Button variant='contained' type='submit' disableElevation>
+        <Grid container justifyContent='flex-end' spacing={1}>
+          {!transactionToEdit && (
+            <Grid item>
+              <Button
+                variant='text'
+                onClick={handleButtonSaveClick}
+                name='saveAndAddAnother'
+                type='submit'
+                disableElevation
+              >
+                Salvar e adicionar outra
+              </Button>
+            </Grid>
+          )}
+          <Grid item>
+            <Button
+              variant='contained'
+              onClick={handleButtonSaveClick}
+              name='save'
+              type='submit'
+              disableElevation
+            >
               Salvar
             </Button>
-          </ButtonBox>
+          </Grid>
         </Grid>
       </MainGrid>
     </form>
