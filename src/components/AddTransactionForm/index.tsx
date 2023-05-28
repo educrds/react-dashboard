@@ -17,7 +17,9 @@ import {
   LabelRounded,
   Backspace,
   ReplayRounded,
+  Label,
 } from '@mui/icons-material';
+import { useSelector } from 'react-redux';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { ptBR } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers';
@@ -28,6 +30,8 @@ import { NumericFormat } from 'react-number-format';
 import { insertDocument, updateDocumentById } from '../../services/redux/transactions/selectors';
 import { useDispatch } from 'react-redux';
 import { MainGrid, InputBoxIcon, ButtonBox, ToggleContainer } from './styles';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import { insertCategory } from '../../services/redux/categories/selectors';
 
 const CustomInput = function CustomInput(props) {
   const { InputProps } = props;
@@ -80,13 +84,13 @@ const AddTransactionForm = ({
     date: '',
     type: '',
   };
-  const dispatch = useDispatch();
   const [formData, setFormData] = useState(initialFormData);
   const [saveButtonClicked, setSaveButtonClicked] = useState('');
   const [repeat, setRepeat] = useState({
     value: 1,
     checked: false,
   });
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (transactionToEdit) {
@@ -104,20 +108,11 @@ const AddTransactionForm = ({
   const handleStatusCheck = (event: React.ChangeEvent<HTMLInputElement>) =>
     setFormData(prevFormData => ({ ...prevFormData, status: event.target.checked }));
 
-  const handleCategoryChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      category: event.target.value,
-    }));
-
   const handleDescriptionChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
     setFormData(prevFormData => ({
       ...prevFormData,
       description: event.target.value,
     }));
-
-  // const handleDateChange = newDate =>
-  //   setFormData(prevFormData => ({ ...prevFormData, date: newDate }));
 
   const handleRepeatCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = event.target.checked;
@@ -223,9 +218,11 @@ const AddTransactionForm = ({
         </Grid>
         <Grid item md={12}>
           <CategoryInput
-            categories={categories}
-            category={formData.category}
-            handleCategoryChange={handleCategoryChange}
+            // categories={categories}
+            formData={formData}
+            setFormData={setFormData}
+            // category={formData.category}
+            // handleCategoryChange={handleCategoryChange}
             transactionType={transactionType === 'revenues' ? 'revenue' : 'expense'}
           />
         </Grid>
@@ -323,50 +320,129 @@ interface CategoryInputProps {
   handleCategoryChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
   transactionType: string;
 }
+const filter = createFilterOptions();
 
 const CategoryInput: React.FC<CategoryInputProps> = ({
-  categories,
-  category,
-  handleCategoryChange,
+  // categories,
+  // category,
+  // handleCategoryChange,
   transactionType,
+  setFormData,
+  formData,
 }) => {
-  const handleCategoryDelete = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    event.stopPropagation();
-    handleCategoryChange({ target: { value: null } });
+  const categories = useSelector((state: any) => state.categories.categories);
+  const categoryFilterByType = categories.filter(({ type }) => type === transactionType);
+  const [allCategories, setAllCategories] = useState(categoryFilterByType);
+  const dispatch = useDispatch();
+
+  const generateRandomColor = () => {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
   };
 
-  const renderCategoryList = () => {
-    const categoryFilterByType = categories.filter(({ type }) => type === transactionType);
-    return categoryFilterByType.map(({ category }, i) => (
-      <MenuItem key={i} value={category}>
-        {category}
-      </MenuItem>
-    ));
+  const generateUniqueColor = categories => {
+    let newColor = generateRandomColor();
+    while (categories.some(category => category.color === newColor)) {
+      newColor = generateRandomColor();
+    }
+    return newColor;
   };
 
-  const handleCategorySelection = (event: React.ChangeEvent<{ value: unknown }>) => {
-    handleCategoryChange(event);
-  };
+  useEffect(() => {
+    if (formData && formData.category) {
+      // Verifica se a categoria já existe no array allCategories
+      const categoryExists = allCategories.some(
+        category => category.category === formData.category
+      );
 
-  const renderCategory = () => <Chip label={category} onDelete={handleCategoryDelete} />;
+      if (!categoryExists) {
+        // Cria uma nova opção a partir do valor inserido pelo usuário
+        const newCategory = {
+          type: transactionType,
+          category: formData.category,
+          color: generateUniqueColor(allCategories),
+        };
+        dispatch(insertCategory(newCategory));
+        console.log(categories);
+      }
+    }
+  }, [formData.category, allCategories]);
 
   return (
-    <TextField
-      id='my-textfield'
-      variant='standard'
-      fullWidth
-      select
-      value={category}
-      onChange={handleCategorySelection}
-      SelectProps={{
-        renderValue: renderCategory,
-      }}
-      InputProps={{
-        startAdornment: <LabelRounded />,
-      }}
-    >
-      {renderCategoryList()}
-    </TextField>
+    <Grid container>
+      <Grid item md={1}>
+        <Label />
+      </Grid>
+      <Grid item md={11}>
+        <Autocomplete
+          value={formData.category}
+          onChange={(event, newValue) => {
+            if (typeof newValue === 'string') {
+              setFormData(prevFormData => ({
+                ...prevFormData,
+                category: newValue.inputValue,
+              }));
+            } else if (newValue && newValue.inputValue) {
+              // Create a new value from the user input
+              setFormData(prevFormData => ({
+                ...prevFormData,
+                category: newValue.inputValue,
+              }));
+            } else {
+              // setValue(newValue);
+              setFormData(prevFormData => ({
+                ...prevFormData,
+                category: newValue.inputValue,
+              }));
+            }
+          }}
+          filterOptions={(options, params) => {
+            const filtered = filter(options, params);
+
+            const { inputValue } = params;
+            // Suggest the creation of a new value
+            const isExisting = options.some(option => inputValue === option.category);
+            if (inputValue !== '' && !isExisting) {
+              filtered.push({
+                inputValue,
+                category: `Adicionar "${inputValue}"`,
+              });
+            }
+
+            return filtered;
+          }}
+          selectOnFocus
+          clearOnBlur
+          handleHomeEndKeys
+          id='free-solo-with-text-demo'
+          options={allCategories}
+          getOptionLabel={option => {
+            // Value selected with enter, right from the input
+            if (typeof option === 'string') {
+              return option;
+            }
+            // Add "xxx" option created dynamically
+            if (option.inputValue) {
+              return option.inputValue;
+            }
+            // Regular option
+            return option.category;
+          }}
+          renderOption={(props, option) => (
+            <li key={option.category} {...props}>
+              {option.category}
+            </li>
+          )}
+          renderInput={params => (
+            <TextField {...params} placeholder='Categoria' variant='standard' />
+          )}
+        />
+      </Grid>
+    </Grid>
   );
 };
 

@@ -11,12 +11,30 @@ import 'moment/dist/locale/pt-br';
 import { MenuItem, Menu, Button, styled, alpha } from '@mui/material';
 import { KeyboardArrowDownRounded } from '@mui/icons-material';
 import { db } from '../../services/firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
+import { addDoc, collection, getDocs } from 'firebase/firestore';
 import { labels } from '../../charts/barChartConfig';
 import { getTransactionsByMonth } from '../../services/redux/transactions/selectors';
 import './styles.scss';
+import { getCategories } from '../../services/redux/categories/selectors';
 
 const uid = localStorage.getItem('@Auth:uid');
+const arrCategoriesDefault = [
+  { category: 'Serviços', type: 'expense', color: '#402dec' },
+  { category: 'Aluguel', type: 'expense', color: '#a654cc' },
+  { category: 'Farmácia', type: 'expense', color: '#70cee6' },
+  { category: 'Vestuário', type: 'expense', color: '#5b9436' },
+  { category: 'Casa', type: 'expense', color: '#023047' },
+  { category: 'Lazer', type: 'expense', color: '#ffb703' },
+  { category: 'Internet', type: 'expense', color: '#fb8500' },
+  { category: 'Alimentos', type: 'expense', color: '#d62828' },
+  { category: 'Transporte', type: 'expense', color: '#e76f51' },
+  { category: 'Saúde', type: 'expense', color: '#a54e80' },
+  { category: 'Mercado', type: 'expense', color: '#466334' },
+  { category: 'Outras despesas', type: 'expense', color: '#bfbfbf' },
+  { category: 'Salário', type: 'revenue', color: '#60d394' },
+  { category: 'Outras receitas', type: 'revenue', color: '#5b9436' },
+  { category: 'Saldo', type: 'revenue', color: '#a2dd7a' },
+];
 
 const Dashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState('');
@@ -32,6 +50,25 @@ const Dashboard = () => {
     setSelectedMonth(month);
   };
 
+  // Cria categorias padrões no inicializar da aplicação
+  const createDefaultCategories = async () => {
+    try {
+      const categoriesCollection = collection(db, `transactions/${uid}/user_categories`);
+      const collectionDocs = await getDocs(categoriesCollection);
+      if (!collectionDocs.empty) {
+        console.log('collections already exists');
+      } else {
+        await Promise.all(
+          arrCategoriesDefault.map(category => {
+            return addDoc(categoriesCollection, category);
+          })
+        );
+      }
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+
   const getInfosUser = async () => {
     const infosUserQuery = collection(db, `transactions/${uid}/user_infos`);
     const infosUser = await getDocs(infosUserQuery);
@@ -40,7 +77,9 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    createDefaultCategories();
     getInfosUser();
+    dispatch(getCategories());
   }, []);
 
   useEffect(() => {
