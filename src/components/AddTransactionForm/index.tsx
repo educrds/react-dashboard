@@ -25,7 +25,7 @@ import { ptBR } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers';
 import moment from 'moment';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { categories } from '../../charts/doughnutChartConfig';
+import { categories, categoryColors } from '../../charts/doughnutChartConfig';
 import { NumericFormat } from 'react-number-format';
 import { insertDocument, updateDocumentById } from '../../services/redux/transactions/selectors';
 import { useDispatch } from 'react-redux';
@@ -334,6 +334,9 @@ const CategoryInput: React.FC<CategoryInputProps> = ({
   const categoryFilterByType = categories.filter(({ type }) => type === transactionType);
   const [allCategories, setAllCategories] = useState(categoryFilterByType);
   const dispatch = useDispatch();
+
+  debugger;
+  console.log(categoryColors);
 
   const generateRandomColor = () => {
     const letters = '0123456789ABCDEF';
