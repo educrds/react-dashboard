@@ -19,13 +19,11 @@ body {
   font-size: 1rem;
   line-height: 1.5;
   color: #333;
-  background: #F2F5FC;
 }
 
 h1,
 h3,
 h2 {
-  color: #666;
   font-weight: 500;
   margin-bottom: 1vh;
 }

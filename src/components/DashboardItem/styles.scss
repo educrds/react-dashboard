@@ -1,5 +1,15 @@
 @import '../../styles/sass/colors';
 
+.theme-dark {
+  .dashboard__item {
+    background: map-get($colors, dark, bg, secondary);
+  }
+}
+.theme-light {
+  .dashboard__item {
+    background-color: map-get($colors, light, white, primary);
+  }
+}
 .dashboard__item {
   border-radius: 0.5rem;
   background-color: map-get($colors, white, primary);

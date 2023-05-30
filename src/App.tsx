@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes, Outlet } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Revenues from './pages/Revenue';
@@ -15,6 +15,7 @@ import authStore from './services/auth/store';
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import './styles/css/style.css';
+import { ThemeContext } from './contexts/ThemeContext';
 
 // const PrivateRoute = ({ element, ...rest }) => {
 //   const isAuthenticated = useSelector(state => state.auth.userId !== null);
@@ -24,10 +25,20 @@ import './styles/css/style.css';
 
 const App: React.FC = () => {
   const uid = localStorage.getItem('@Auth:uid');
+  const [theme, setTheme] = useState('light');
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.remove('theme-light', 'theme-dark');
+    root.classList.add(`theme-${theme}`);
+    console.log(theme);
+  }, [theme]);
+
 
   return (
     <NavbarContextProvider>
-      <BrowserRouter>
+      <ThemeContext.Provider value={{ theme, setTheme }}>
+        <BrowserRouter>
           <Provider store={transactionsStore}>
             <Routes>
               <Route element={<Outlet />}>
@@ -56,7 +67,8 @@ const App: React.FC = () => {
               </Route>
             </Routes>
           </Provider>
-      </BrowserRouter>
+        </BrowserRouter>
+      </ThemeContext.Provider>
     </NavbarContextProvider>
   );
 };

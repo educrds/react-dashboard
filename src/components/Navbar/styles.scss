@@ -1,12 +1,61 @@
 @import '../../styles/sass/colors';
 
+.theme-light {
+  nav {
+    background: map-get($colors, light, white, primary);
+    .nav__button__container {
+      color: map-get($colors, light, grey, dark);
+      &.active {
+        background: map-get($colors, light, colorized, primary);
+        color: map-get($colors, light, white, secondary);
+      }
+      &:hover {
+        background: map-get($colors, light, colorized, secondary);
+        color: map-get($colors, light, grey, light);
+      }
+      &.add__button {
+        color: map-get($colors, light, white, secondary);
+        background: map-get($colors, light, colorized, primary);
+      }
+    }
+    .toggle__theme__container > button {
+      // background-color: map-get($colors, light, colorized, primary);
+      color: map-get($colors, light, grey, dark);
+      &.Mui-selected {
+        background-color: map-get($colors, light, colorized, primary);
+        color: map-get($colors, light, white, primary);
+      }
+    }
+  }
+}
+.theme-dark {
+  nav {
+    background: map-get($colors, dark, bg, secondary);
+    .nav__button__container {
+      color: map-get($colors, light, white, primary);
+      &.active {
+        background: map-get($colors, dark, bg, terciary);
+      }
+      &.add__button {
+        background: map-get($colors, dark, bg, terciary);
+      }
+    }
+    .toggle__theme__container > button {
+      background-color: map-get($colors, dark, bg, secondary);
+      color: map-get($colors, light, white, primary);
+      &.Mui-selected {
+        background-color: map-get($colors, dark, bg, terciary);
+        color: map-get($colors, light, white, primary);
+      }
+    }
+  }
+}
 nav {
   width: 20%;
   height: 100vh;
   position: fixed;
   left: 0;
   top: 0;
-  background: map-get($colors, white, primary);
   transition: width 0.5s ease-in-out;
 
   &.collapsed {
@@ -124,17 +173,18 @@ nav {
         }
       }
     }
-    .logout__button {
-      align-self: center;
+    .toggle__theme__container {
       display: flex;
-      align-items: center;
-      font-size: 1.1rem;
-      color: #eb3d3d;
-      gap: 3px;
-      cursor: pointer;
-      svg {
-        font-size: 1.35rem;
-      }
+      gap: 8px;
+      padding: 1.3px;
+      border-radius: 0.5rem;
+    }
+    .toggle__theme__container > button {
+      height: 32px;
+      width: 100%;
+      font-size: 0.8rem;
+      border-radius: 0.45rem !important;
+      border: none;
     }
   }
 }

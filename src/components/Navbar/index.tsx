@@ -8,32 +8,28 @@ import {
   ExitToAppOutlined,
   KeyboardArrowRightRounded,
   KeyboardArrowLeftRounded,
-  Settings 
+  Settings,
 } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { NavbarContext } from '../../contexts/NavbarContext';
-import { useNavigate } from 'react-router-dom';
 import AddButtonMenu from '../AddMenu';
+import { ToggleButtonGroup, ToggleButton } from '@mui/material';
 import './styles.scss';
+import { ThemeContext } from '../../contexts/ThemeContext';
 
 const Navbar = () => {
   const [activeIndex, setActiveIndex] = useState(null);
   const { handleCollapseToggle, isCollapsed } = useContext(NavbarContext);
-  const navigate = useNavigate();
 
   const handleClick = (index: number | null): void => setActiveIndex(index);
   const renderText = (text: string): JSX.Element | null =>
     !isCollapsed ? <span>{text}</span> : null;
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate('/');
-  };
 
   return (
     <nav className={`${isCollapsed && 'collapsed'}`}>
       <div className={'nav__wrapper'}>
         <Brand />
-        <ToggleButton onClick={handleCollapseToggle} collapsed={isCollapsed} />
+        <ColapseButton onClick={handleCollapseToggle} collapsed={isCollapsed} />
         <div className='nav__menu'>
           <AddButtonMenu collapsed={isCollapsed} />
           <NavButton
@@ -78,7 +74,7 @@ const Navbar = () => {
             to='/preferencias'
           />
         </div>
-        <LogoutButton onClick={handleLogout} text={renderText('Sair')} />
+        <ToggleThemeButton collapsed={isCollapsed} />
       </div>
     </nav>
   );
@@ -104,29 +100,62 @@ const NavButton = ({ icon, text, onClick, isActive, to, collapsed }: NavButtonPr
   );
 };
 
-interface ToggleButtonProps {
+interface ColapseButtonProps {
   onClick: () => void;
   collapsed: boolean;
 }
 
-const ToggleButton = ({ onClick, collapsed }: ToggleButtonProps) => {
+const ColapseButton = ({ onClick, collapsed }: ColapseButtonProps) => {
   return (
     <div className='nav__toggle' onClick={onClick}>
       {collapsed ? <KeyboardArrowRightRounded /> : <KeyboardArrowLeftRounded />}
     </div>
   );
 };
-interface LogoutButtonProps {
-  onClick: () => void;
-  text: string;
-}
 
-const LogoutButton = ({ onClick, text }: LogoutButtonProps) => {
+const ToggleThemeButton = ({ collapsed }) => {
+  const { theme, setTheme } = useContext(ThemeContext);
+  const [alignment, setAlignment] = React.useState(theme);
+
+  const handleChange = (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
+    const buttonClicked = event.target.value;
+
+    if (collapsed) {
+      setTheme(buttonClicked === 'dark' ? 'light' : 'dark');
+      setAlignment(buttonClicked === 'dark' ? 'light' : 'dark');
+    } else {
+      setTheme(buttonClicked === 'dark' ? 'dark' : 'light');
+      setAlignment(buttonClicked);
+    }
+  };
+
+  if (collapsed) {
+    return (
+      <ToggleButtonGroup
+        color='primary'
+        value={alignment}
+        exclusive
+        onChange={handleChange}
+        aria-label='Platform'
+        className='toggle__theme__container'
+      >
+        <ToggleButton value={alignment}>{alignment}</ToggleButton>
+      </ToggleButtonGroup>
+    );
+  }
+
   return (
-    <div className='logout__button' onClick={onClick}>
-      <ExitToAppOutlined />
-      {text}
-    </div>
+    <ToggleButtonGroup
+      color='primary'
+      value={alignment}
+      exclusive
+      onChange={handleChange}
+      aria-label='Platform'
+      className='toggle__theme__container'
+    >
+      <ToggleButton value='light'>Light</ToggleButton>
+      <ToggleButton value='dark'>Dark</ToggleButton>
+    </ToggleButtonGroup>
   );
 };
 

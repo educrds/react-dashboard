@@ -7,6 +7,36 @@
     color: map-get($colors, white, secondary);
   }
 }
+.theme-dark {
+  .MuiDataGrid-root {
+    background-color: map-get($colors, dark, bg, secondary);
+    border-radius: 0.5rem;
+    border: none;
+    .MuiDataGrid-main {
+      background-color: map-get($colors, dark, bg, secondary);
+      color: map-get($colors, light, white, primary);
+      border-radius: 0.5rem;
+    }
+    .MuiTablePagination-root{
+      color: map-get($colors, light, white, primary);
+    }
+  }
+}
+.theme-light {
+  .MuiDataGrid-root {
+    background-color: map-get($colors, light, white, primary);
+    border-radius: 0.5rem;
+    border: none;
+    .MuiDataGrid-main {
+      background-color: map-get($colors, light, white, primary);
+      color: map-get($colors, light, grey, dark);
+      border-radius: 0.5rem;
+    }
+    .MuiTablePagination-root{
+      color: map-get($colors, light, grey, dark);
+    }
+  }
+}
 .transaction_type {
   display: flex;
   div {

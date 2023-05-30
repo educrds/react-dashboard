@@ -1,6 +1,19 @@
+@import '../../styles/sass/colors';
+
+.theme-dark {
+  .wrapper {
+    background: map-get($colors, dark, bg, primary);
+    color: map-get($colors, light, grey, light);
+  }
+}
+.theme-light {
+  .wrapper {
+    background: map-get($colors, light, colorized, secondary);
+    color: map-get($colors, light, grey, dark);
+  }
+}
 .wrapper {
   padding: 2vh 2vw 0 1.5vw;
-  color: #bfbfbf;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;

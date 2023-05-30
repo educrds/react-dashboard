@@ -1,14 +1,24 @@
 $colors: (
-  colorized: (
-    primary: #215dbe,
-    secondary: #F2F5FC,
+  light: (
+    colorized: (
+      primary: #215dbe,
+      secondary: #f2f5fc,
+    ),
+    white: (
+      primary: #fff,
+      secondary: #f0f2f8,
+    ),
+    grey: (
+      dark: #666,
+      light: #bfbfbf,
+    ),
   ),
-  white: (
-    primary: #fff,
-    secondary: #f0f2f8,
-  ),
-  grey: (
-    dark: #666,
-    light: #bfbfbf,
+
+  dark: (
+    bg: (
+      primary: #262a35,
+      secondary: #2d303b,
+      terciary: #35435b,
+    ),
   ),
 );

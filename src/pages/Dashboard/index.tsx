@@ -8,14 +8,15 @@ import Wrapper from '../../components/Wrapper';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import 'moment/dist/locale/pt-br';
-import { MenuItem, Menu, Button, styled, alpha } from '@mui/material';
+import { MenuItem, Menu, Button, styled, alpha, IconButton } from '@mui/material';
 import { KeyboardArrowDownRounded } from '@mui/icons-material';
 import { db } from '../../services/firebaseConfig';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
 import { labels } from '../../charts/barChartConfig';
 import { getTransactionsByMonth } from '../../services/redux/transactions/selectors';
-import './styles.scss';
 import { getCategories } from '../../services/redux/categories/selectors';
+import './styles.scss';
+import { useNavigate } from 'react-router-dom';
 
 const uid = localStorage.getItem('@Auth:uid');
 const arrCategoriesDefault = [
@@ -146,14 +147,64 @@ interface Props {
 }
 
 const MenuBar: React.FC<Props> = ({ handleMonthChange, photo }) => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const navigate = useNavigate();
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = event => {
+    if (event.target.value === 0) {
+      localStorage.clear();
+      navigate('/');
+    } else {
+      setAnchorEl(null);
+    }
+  };
   return (
     <div className='dashboard__bar'>
       <div>Dashboard</div>
       <MonthDropdown handleMonthChange={handleMonthChange} />
       <div>
-        <img src={photo} alt='profile photo' />
+        <LogoutMenu
+          photo={photo}
+          open={open}
+          handleClick={handleClick}
+          anchorEl={anchorEl}
+          handleClose={handleClose}
+        />
       </div>
     </div>
+  );
+};
+
+const LogoutMenu = ({ open, handleClick, anchorEl, handleClose, photo }) => {
+  return (
+    <>
+      <IconButton
+        aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup='true'
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+        color='primary'
+        aria-label='upload picture'
+        component='label'
+      >
+        <img src={photo} alt='profile photo' />
+      </IconButton>
+      <Menu
+        id='basic-menu'
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={handleClose}>Sair</MenuItem>
+      </Menu>
+    </>
   );
 };
 
