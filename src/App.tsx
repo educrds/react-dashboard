@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import './styles/css/style.css';
 import { ThemeContext } from './contexts/ThemeContext';
+import ForgotPassword from './pages/Auth/ForgotPassword';
 
 // const PrivateRoute = ({ element, ...rest }) => {
 //   const isAuthenticated = useSelector(state => state.auth.userId !== null);
@@ -44,6 +45,7 @@ const App: React.FC = () => {
               <Route element={<Outlet />}>
                 <Route path='/' element={<Login />} />
                 <Route path='/register' element={<Register />} />
+                <Route path='/forgot-password' element={<ForgotPassword />} />
                 <Route
                   element={
                     <>

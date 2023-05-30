@@ -6,12 +6,11 @@ import PasswordInput from '../../../components/Inputs/PasswordInput';
 import illustration from '../../../assets/imgs/illustration.png';
 import Input from '../../../components/Inputs/Input';
 import { Link } from 'react-router-dom';
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../services/firebaseConfig';
 import { setUserId } from '../../../services/auth/actions';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { MdOutlineMarkEmailRead } from 'react-icons/md';
 import '../styles.scss';
 
 const Login = () => {
@@ -19,7 +18,6 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [sendEmailPasswordReset, setSendEmailPasswordReset] = useState(false);
 
   // Responsável por logar uma conta de usuário com email e senha através da função signInWithEmailAndPassword do Firebase.
   const HandleLoginClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -41,18 +39,9 @@ const Login = () => {
   const handlePasswordChange = (event: React.ChangeEvent<HTMLButtonElement>) =>
     setPassword(event.target.value);
 
-  // Responsável pelo envio de email para reset de senha
-  const handlePasswordReset = async (event: React.ChangeEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    try {
-      await sendPasswordResetEmail(auth, email);
-      setSendEmailPasswordReset(true);
-      setTimeout(() => {
-        setSendEmailPasswordReset(false);
-      }, 2500);
-    } catch (error) {
-      console.log(error.code, error.message);
-    }
+  // Responsável pelo redirecionamento para página de redefinir senha
+  const handleRedirectPasswordReset = () => {
+    navigate('/forgot-password');
   };
 
   return (
@@ -61,7 +50,6 @@ const Login = () => {
         <Brand />
         <GoogleAuthButton text='Entrar com Google' />
         <Line />
-        {sendEmailPasswordReset && <AlertMessage />}
         <Input
           type='email'
           placeholder='Email'
@@ -71,20 +59,11 @@ const Login = () => {
           value={email}
         />
         <PasswordInput onChange={handlePasswordChange} value={password} />
-        <ForgetPassword onClick={handlePasswordReset} />
+        <ForgetPassword onClick={handleRedirectPasswordReset} />
         <AuthButton text='Entrar' onClick={HandleLoginClick} />
         <CreateAccount />
       </div>
       <Illustration />
-    </div>
-  );
-};
-
-const AlertMessage = () => {
-  return (
-    <div className='alert__message'>
-      <MdOutlineMarkEmailRead />
-      Email para redefinir senha enviado.
     </div>
   );
 };
