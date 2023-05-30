@@ -5,7 +5,7 @@ import Wrapper from '../../components/Wrapper';
 const Transactions = () => {
   return (
     <Wrapper>
-      <AllTransactions />
+      <AllTransactions type='all' />
     </Wrapper>
   );
 };

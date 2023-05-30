@@ -8,6 +8,12 @@
       color: map-get($colors, light, white, secondary);
     }
   }
+  .MuiDataGrid-overlay {
+    background-color: map-get($colors, dark, bg, secondary);
+  }
+  .MuiDataGrid-columnHeaders{
+    border: none;
+  }
   .MuiDataGrid-root {
     background-color: map-get($colors, dark, bg, secondary);
     border-radius: 0.5rem;
