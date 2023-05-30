@@ -6,8 +6,8 @@
     .nav__button__container {
       color: map-get($colors, light, grey, dark);
       &.active {
-        background: map-get($colors, light, colorized, primary);
-        color: map-get($colors, light, white, secondary);
+        background: map-get($colors, light, colorized, secondary);
+        color: map-get($colors, light, colorized, primary);
       }
       &:hover {
         background: map-get($colors, light, colorized, secondary);
@@ -34,7 +34,7 @@
     .nav__button__container {
       color: map-get($colors, light, white, primary);
       &.active {
-        background: map-get($colors, dark, bg, terciary);
+        background: map-get($colors, dark, bg, primary);
       }
       &.add__button {
         background: map-get($colors, dark, bg, terciary);

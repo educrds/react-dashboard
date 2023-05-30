@@ -1,3 +1,14 @@
+@import '../../styles/sass/colors';
+
+.theme-dark {
+  .MuiButtonBase-root.MuiButton-root {
+    background-color: map-get($colors, dark, bg, terciary);
+  }
+  .MuiPaper-root .MuiList-root {
+    background-color: map-get($colors, dark, bg, secondary);
+    color: map-get($colors, light, grey, light);
+  }
+}
 .dashboard__bar {
   display: flex;
   align-items: center;
@@ -6,7 +17,7 @@
     display: flex;
     &:first-child {
       font-size: 24px;
-      color: #666;
+      color: map-get($colors, light, grey, light);
       font-weight: 500;
     }
   }

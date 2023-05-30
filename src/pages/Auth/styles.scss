@@ -10,6 +10,7 @@
     align-items: center;
     padding: 5vh 5vw;
     height: 100%;
+    background-color: map-get($colors, light, colorized, secondary);
     flex: 1;
     .alert__message {
       width: 100%;
@@ -53,7 +54,7 @@
     .create__account {
       color: map-get($colors, grey, light);
       a {
-        color: map-get($colors, colorized, primary);
+        color: map-get($colors, light, colorized, primary);
         font-weight: 600;
       }
     }

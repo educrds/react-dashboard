@@ -259,38 +259,36 @@ const MonthDropdown = ({ handleMonthChange }) => {
   };
 
   return (
-    <>
-      <div>
-        <Button
-          id='demo-customized-button'
-          aria-controls={open ? 'demo-customized-menu' : undefined}
-          aria-haspopup='true'
-          aria-expanded={open ? 'true' : undefined}
-          variant='contained'
-          disableElevation
-          onClick={handleClick}
-          endIcon={<KeyboardArrowDownRounded />}
-          sx={{ textTransform: 'capitalize', borderRadius: '.5rem' }}
-        >
-          {selectedMonth}
-        </Button>
-        <StyledMenu
-          id='demo-customized-menu'
-          MenuListProps={{
-            'aria-labelledby': 'demo-customized-button',
-          }}
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-        >
-          {labels.map((label, index) => (
-            <MenuItem onClick={handleMenuItemClick} value={label} key={index} id={index + 1}>
-              {label}
-            </MenuItem>
-          ))}
-        </StyledMenu>
-      </div>
-    </>
+    <div>
+      <Button
+        id='demo-customized-button'
+        aria-controls={open ? 'demo-customized-menu' : undefined}
+        aria-haspopup='true'
+        aria-expanded={open ? 'true' : undefined}
+        variant='contained'
+        disableElevation
+        onClick={handleClick}
+        endIcon={<KeyboardArrowDownRounded />}
+        sx={{ textTransform: 'capitalize', borderRadius: '.5rem' }}
+      >
+        {selectedMonth}
+      </Button>
+      <StyledMenu
+        id='demo-customized-menu'
+        MenuListProps={{
+          'aria-labelledby': 'demo-customized-button',
+        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
+        {labels.map((label, index) => (
+          <MenuItem onClick={handleMenuItemClick} value={label} key={index} id={index + 1}>
+            {label}
+          </MenuItem>
+        ))}
+      </StyledMenu>
+    </div>
   );
 };
 

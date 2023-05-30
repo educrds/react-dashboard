@@ -1,13 +1,13 @@
 @import '../../styles/sass/colors';
 
-.table_header_color {
-  background-color: map-get($colors, colorized, primary);
-  color: map-get($colors, white, secondary);
-  button {
-    color: map-get($colors, white, secondary);
-  }
-}
 .theme-dark {
+  .table_header_color {
+    background-color: map-get($colors, dark, bg, terciary);
+    color: map-get($colors, white, secondary);
+    button {
+      color: map-get($colors, light, white, secondary);
+    }
+  }
   .MuiDataGrid-root {
     background-color: map-get($colors, dark, bg, secondary);
     border-radius: 0.5rem;
@@ -17,12 +17,19 @@
       color: map-get($colors, light, white, primary);
       border-radius: 0.5rem;
     }
-    .MuiTablePagination-root{
+    .MuiTablePagination-root {
       color: map-get($colors, light, white, primary);
     }
   }
 }
 .theme-light {
+  .table_header_color {
+    background-color: map-get($colors, light, colorized, primary);
+    color: map-get($colors, light, white, primary);
+    button {
+      color: map-get($colors, light, white, secondary);
+    }
+  }
   .MuiDataGrid-root {
     background-color: map-get($colors, light, white, primary);
     border-radius: 0.5rem;
@@ -32,7 +39,7 @@
       color: map-get($colors, light, grey, dark);
       border-radius: 0.5rem;
     }
-    .MuiTablePagination-root{
+    .MuiTablePagination-root {
       color: map-get($colors, light, grey, dark);
     }
   }
