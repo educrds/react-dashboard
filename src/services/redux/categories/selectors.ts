@@ -21,14 +21,13 @@ const getCategories = () => async (dispatch: any) => {
 };
 
 const insertCategory = (data: string) => async (dispatch: any) => {
-  debugger;
   try {
     const docRef = collection(db, `transactions/${uid}/user_categories`);
     await addDoc(docRef, data);
 
     console.log('Document written with ID: ', docRef.id);
-    const newCategory = { id: docRef.id, ...data };
-    dispatch(addCategory(newCategory));
+    // const newCategory = { id: docRef.id, ...data };
+    // dispatch(addCategory(newCategory));
   } catch (error) {
     throw new Error(error.message);
   }

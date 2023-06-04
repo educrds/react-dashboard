@@ -362,6 +362,7 @@ const CategoryInput: React.FC<CategoryInputProps> = ({
           category: formData.category,
           color: generateUniqueColor(allCategories),
         };
+        debugger;
         dispatch(insertCategory(newCategory));
         dispatch(getCategories());
         setAllCategories(categories.filter(({ type }) => type === transactionType));
