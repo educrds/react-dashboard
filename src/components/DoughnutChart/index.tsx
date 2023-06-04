@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DashboardItem from '../DashboardItem';
 import { Doughnut } from 'react-chartjs-2';
-import options, { categoryColors } from '../../charts/doughnutChartConfig';
+import options from '../../charts/doughnutChartConfig';
+import { getCategoryColors } from '../../charts/doughnutChartConfig';
+import { useSelector } from 'react-redux';
 
 type DoughnutChartProps = {
   title: string;
@@ -36,16 +38,48 @@ const DoughnutChart = ({
   data,
   fallbackLabel = 'Sem dados',
 }: DoughnutChartProps) => {
+  const [categoriesByColor, setCategoriesByColor] = useState(null);
+  const categories = useSelector((state: any) => state.categories.categories);
+  const [dataReady, setDataReady] = useState(false);
 
-  const chartData = {
-    labels: data.length > 0 ? labels : [fallbackLabel],
-    datasets: [
-      {
-        data: data.length > 0 ? data : [1],
-        backgroundColor: data.length > 0 ? labels.map(label => categoryColors[label]) : '#bfbfbf',
-      },
-    ],
+  useEffect(() => {
+    const fetchCategoryColors = async () => {
+      try {
+        const colors = await getCategoryColors(categories);
+        setCategoriesByColor(colors);
+        setDataReady(true);
+      } catch (error) {
+        throw new Error(error.message);
+      }
+    };
+
+    if (categories) {
+      fetchCategoryColors();
+    }
+  }, [categories]);
+
+  const configureChartData = () => {
+    if (!dataReady || !categoriesByColor) {
+      return null;
+    }
+
+    return {
+      labels: data.length > 0 ? labels : [fallbackLabel],
+      datasets: [
+        {
+          data: data.length > 0 ? data : [1],
+          backgroundColor: data.length > 0
+            ? labels.map(label => categoriesByColor[label])
+            : '#bfbfbf',
+        },
+      ],
+    };
   };
+  const chartData = configureChartData();
+
+  if (!dataReady) {
+    return <div>Carregando...</div>; // ou null, dependendo do comportamento desejado
+  }
 
   const chartOptions = {
     ...options,

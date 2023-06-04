@@ -1,5 +1,7 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { createSelector } from '@reduxjs/toolkit';
+import { useStore } from 'react-redux';
+import { transactionsStore } from '../services/redux/transactions/constants';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -25,18 +27,14 @@ const options = {
   hoverOffset: 5,
 };
 
-// Função de seleção
-const selectCategories = state => state.categories;
-
 // Criação do seletor
-const getCategoryColors = createSelector(
-  selectCategories,
-  categories => Object.fromEntries(
-    categories.map(({ category, color }) => [category, color])
-  )
-);
-
-// Exemplo de uso do seletor
-export const categoryColors = getCategoryColors(store.getState());
+export const getCategoryColors = async categories => {
+  try {
+    const colors = await Object.fromEntries(categories.map(({ category, color }) => [category, color]));
+    return colors;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 
 export default options;

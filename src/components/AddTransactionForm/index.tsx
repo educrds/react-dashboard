@@ -25,13 +25,13 @@ import { ptBR } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers';
 import moment from 'moment';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { categories, categoryColors } from '../../charts/doughnutChartConfig';
 import { NumericFormat } from 'react-number-format';
+import { categoryColors } from '../../charts/doughnutChartConfig';
 import { insertDocument, updateDocumentById } from '../../services/redux/transactions/selectors';
 import { useDispatch } from 'react-redux';
 import { MainGrid, InputBoxIcon, ButtonBox, ToggleContainer } from './styles';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
-import { insertCategory } from '../../services/redux/categories/selectors';
+import { getCategories, insertCategory } from '../../services/redux/categories/selectors';
 
 const CustomInput = function CustomInput(props) {
   const { InputProps } = props;
@@ -141,8 +141,7 @@ const AddTransactionForm = ({
     let lastDate = moment.unix(updatedFormData.date);
 
     // Arredondar o valor da transação para a casa decimal mais próxima
-    const valuePerRepeatTransactions =
-      Math.round((updatedFormData.value / repeatCount) * 100) / 100;
+    const valuePerRepeatTransactions = Math.round(updatedFormData.value);
 
     // Gerar as transações a serem inseridas
     for (let i = 1; i <= repeatCount; i++) {
@@ -323,9 +322,6 @@ interface CategoryInputProps {
 const filter = createFilterOptions();
 
 const CategoryInput: React.FC<CategoryInputProps> = ({
-  // categories,
-  // category,
-  // handleCategoryChange,
   transactionType,
   setFormData,
   formData,
@@ -334,9 +330,6 @@ const CategoryInput: React.FC<CategoryInputProps> = ({
   const categoryFilterByType = categories.filter(({ type }) => type === transactionType);
   const [allCategories, setAllCategories] = useState(categoryFilterByType);
   const dispatch = useDispatch();
-
-  debugger;
-  console.log(categoryColors);
 
   const generateRandomColor = () => {
     const letters = '0123456789ABCDEF';
@@ -370,10 +363,16 @@ const CategoryInput: React.FC<CategoryInputProps> = ({
           color: generateUniqueColor(allCategories),
         };
         dispatch(insertCategory(newCategory));
-        console.log(categories);
+        dispatch(getCategories());
+        setAllCategories(categories.filter(({ type }) => type === transactionType));
       }
     }
-  }, [formData.category, allCategories]);
+  }, [formData.category]);
+
+  // useEffect(() => {
+  //   dispatch(getCategories());
+  //   // setAllCategories(categories.filter(({ type }) => type === transactionType));
+  // }, [categories]);
 
   return (
     <Grid container>
@@ -385,9 +384,10 @@ const CategoryInput: React.FC<CategoryInputProps> = ({
           value={formData.category}
           onChange={(event, newValue) => {
             if (typeof newValue === 'string') {
+              console.log(value);
               setFormData(prevFormData => ({
                 ...prevFormData,
-                category: newValue.inputValue,
+                category: newValue.category,
               }));
             } else if (newValue && newValue.inputValue) {
               // Create a new value from the user input
@@ -396,16 +396,15 @@ const CategoryInput: React.FC<CategoryInputProps> = ({
                 category: newValue.inputValue,
               }));
             } else {
-              // setValue(newValue);
+              console.log(newValue.category);
               setFormData(prevFormData => ({
                 ...prevFormData,
-                category: newValue.inputValue,
+                category: newValue.category,
               }));
             }
           }}
           filterOptions={(options, params) => {
             const filtered = filter(options, params);
-
             const { inputValue } = params;
             // Suggest the creation of a new value
             const isExisting = options.some(option => inputValue === option.category);
@@ -436,7 +435,7 @@ const CategoryInput: React.FC<CategoryInputProps> = ({
             return option.category;
           }}
           renderOption={(props, option) => (
-            <li key={option.category} {...props}>
+            <li key={option.id} {...props}>
               {option.category}
             </li>
           )}

@@ -12,28 +12,19 @@ import {
   MenuItem,
 } from '@mui/material';
 import { StyledMenu } from '../../pages/Dashboard';
-import { categoryColors } from '../../charts/doughnutChartConfig';
 import PaymentChip from '../PaymentChip';
 import moment from 'moment';
 import { deleteDocumentById, getTransactions } from '../../services/redux/transactions/selectors';
 import { useSelector, useDispatch } from 'react-redux';
 import AddTransactionModal from '../AddTransactionModal';
+import { getCategories } from '../../services/redux/categories/selectors';
 import './styles.scss';
+import { getCategoryColors } from '../../charts/doughnutChartConfig';
 
 const theme = createTheme(
   {
     ptBR,
     components: {
-      MuiDataGrid: {
-        styleOverrides: {
-          root: {
-            fontFamily: 'Poppins',
-            color: '#666',
-            backgroundColor: '#fcfcfc',
-            borderRadius: '0.5rem',
-          },
-        },
-      },
       MuiTab: {
         styleOverrides: {
           root: {
@@ -78,71 +69,6 @@ const theme = createTheme(
   ptBR
 );
 
-const columns: GridColDef[] = [
-  {
-    field: 'situation',
-    headerName: 'Situação',
-    flex: 1,
-    headerClassName: 'table_header_color',
-    renderCell: (params: GridValueGetterParams) => {
-      const { status, type } = params.row;
-      if (type === 'expenses') {
-        return <PaymentChip label={status ? 'Paga' : 'Não paga'} />;
-      }
-      return <PaymentChip label={status ? 'Recebida' : 'Não recebida'} />;
-    },
-    filter: 'agTextColumnFilter', // Exemplo de filtro de texto
-  },
-  {
-    field: 'date',
-    headerName: 'Data',
-    flex: 1,
-    headerClassName: 'table_header_color',
-    valueGetter: params => moment.unix(params.value).format('DD/MM/YYYY'),
-  },
-  {
-    field: 'description',
-    headerName: 'Descrição',
-    flex: 1,
-    headerClassName: 'table_header_color',
-    valueFormatter: params => {
-      const words = params.value.split(' ');
-      const capitalizedWords = words.map(
-        word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-      );
-      return capitalizedWords.join(' ');
-    },
-  },
-  {
-    field: 'category',
-    headerName: 'Categoria',
-    type: 'number',
-    flex: 1,
-    headerClassName: 'table_header_color',
-    headerAlign: 'left',
-    align: 'left',
-    renderCell: (params: GridCellParams) => {
-      const category = params.value;
-      const color = categoryColors[category] || '#333';
-      return <Chip label={category} style={{ backgroundColor: color, color: '#ffffff' }} />;
-    },
-  },
-  {
-    field: 'value',
-    headerName: 'Valor',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: true,
-    flex: 1,
-    headerClassName: 'table_header_color',
-    valueFormatter: ({ value }) =>
-      new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value),
-    cellClassName: params => {
-      const type = params.row.type; // assuming the type is present in the row object
-      return type === 'expenses' ? 'expenses_value' : 'revenues_value';
-    },
-  },
-];
-
 interface PropsAllTransactions {
   type?: string;
 }
@@ -153,10 +79,91 @@ const AllTransactions = ({ type }: PropsAllTransactions) => {
   const [selectedTableRow, setSelectedRow] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [categoriesByColor, setCategoriesByColor] = useState(null);
+
+  const categories = useSelector((state: any) => state.categories.categories);
 
   const open = Boolean(anchorEl);
   const dispatch = useDispatch();
   const transactionsByMonth = useSelector((state: any) => state.transactions.transactionsByMonth);
+  const transactions = useSelector((state: any) => state.transactions.transactions);
+
+  const columns: GridColDef[] = [
+    {
+      field: 'situation',
+      headerName: 'Situação',
+      flex: 1,
+      headerClassName: 'table_header_color',
+      renderCell: (params: GridValueGetterParams) => {
+        const { status, type } = params.row;
+        if (type === 'expenses') {
+          return <PaymentChip label={status ? 'Paga' : 'Não paga'} />;
+        }
+        return <PaymentChip label={status ? 'Recebida' : 'Não recebida'} />;
+      },
+    },
+    {
+      field: 'date',
+      headerName: 'Data',
+      flex: 1,
+      headerClassName: 'table_header_color',
+      valueGetter: params => moment.unix(params.value).format('DD/MM/YYYY'),
+            sortComparator: (date1, date2, params1, params2) => {
+        // Converter as datas para o formato correto para comparação
+        const convertedDate1 = moment(date1, 'DD/MM/YYYY');
+        const convertedDate2 = moment(date2, 'DD/MM/YYYY');
+    
+        // Comparar as datas e retornar o resultado
+        if (convertedDate1.isAfter(convertedDate2)) {
+          return 1; // Retorna um número negativo para indicar que a primeira data é maior
+        } else if (convertedDate1.isBefore(convertedDate2)) {
+          return -1; // Retorna um número positivo para indicar que a primeira data é menor
+        }
+        return 0; // Retorna 0 se as datas forem iguais
+      }
+    },
+    {
+      field: 'description',
+      headerName: 'Descrição',
+      flex: 1,
+      headerClassName: 'table_header_color',
+      valueFormatter: params => {
+        const words = params.value.split(' ');
+        const capitalizedWords = words.map(
+          word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        );
+        return capitalizedWords.join(' ');
+      },
+    },
+    {
+      field: 'category',
+      headerName: 'Categoria',
+      type: 'number',
+      flex: 1,
+      headerClassName: 'table_header_color',
+      headerAlign: 'left',
+      align: 'left',
+      renderCell: (params: GridCellParams) => {
+        const category = params.value;
+        const color = categoriesByColor[category] || '#333';
+        return <Chip label={category} style={{ backgroundColor: color, color: '#ffffff' }} />;
+      },
+    },
+    {
+      field: 'value',
+      headerName: 'Valor',
+      description: 'This column has a value getter and is not sortable.',
+      sortable: true,
+      flex: 1,
+      headerClassName: 'table_header_color',
+      valueFormatter: ({ value }) =>
+        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value),
+      cellClassName: params => {
+        const type = params.row.type; // assuming the type is present in the row object
+        return type === 'expenses' ? 'expenses_value' : 'revenues_value';
+      },
+    },
+  ];
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
@@ -172,14 +179,35 @@ const AllTransactions = ({ type }: PropsAllTransactions) => {
     if (selectedValue === 'Receitas') {
       return row.type === 'revenues';
     }
+    if (type) {
+      return row.type === type;
+    }
     return true;
   };
 
   const filterRows = () => {
-    // problema de renderizar automatico apos CRUD aqui
-    const filteredTransactions = transactionsByMonth.filter(filterRowsByType);
-    setTableData(filteredTransactions);
+    if (type === 'all') {
+      setTableData(transactions);
+    } else {
+      const filteredTransactions = transactionsByMonth.filter(filterRowsByType);
+      setTableData(filteredTransactions);
+    }
   };
+
+  useEffect(() => {
+    const fetchCategoryColors = async () => {
+      try {
+        const colors = await getCategoryColors(categories);
+        setCategoriesByColor(colors);
+      } catch (error) {
+        throw new Error(error.message);
+      }
+    };
+
+    if (categories) {
+      fetchCategoryColors();
+    }
+  }, [categories]);
 
   useEffect(() => {
     dispatch(getTransactions(type));
@@ -304,6 +332,7 @@ interface TransactionsTableProps {
 }
 
 const TransactionsTable = ({ tableData, columns, setSelectedRow }: TransactionsTableProps) => {
+  const pageSizeOptions = [5, 10, 15, 25, tableData.length];
   const [sortModel, setSortModel] = React.useState([
     {
       field: 'date',
@@ -318,6 +347,7 @@ const TransactionsTable = ({ tableData, columns, setSelectedRow }: TransactionsT
     setSelectedRow(selectedTableRowData);
   };
 
+
   return (
     <DataGrid
       rows={tableData}
@@ -331,7 +361,7 @@ const TransactionsTable = ({ tableData, columns, setSelectedRow }: TransactionsT
       }}
       sortModel={sortModel}
       onSortModelChange={model => setSortModel(model)}
-      pageSizeOptions={[5, 10, 15, 25]}
+      pageSizeOptions={pageSizeOptions}
       onRowSelectionModelChange={handleChangeSelectedRow}
     />
   );
